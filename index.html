@@ -111,7 +111,7 @@
             background-repeat: no-repeat;
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
-            padding: 0 20px 190px 20px;
+            padding: 0 20px 75px 20px;
             transition: 0.6s ease-out;
             filter: brightness(105%) contrast(100%);
         }
@@ -144,20 +144,19 @@
             height: 100%; 
             background: var(--accent); 
             border-radius: 10px;
-            transition: width 0.03s linear;
+            transition: width 0.04s linear;
         }
         
         .creative-counter {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 900;
             color: #ffffff;
             background: rgba(0, 0, 0, 0.75);
-            padding: 10px 24px;
+            padding: 8px 24px;
             border-radius: 35px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             border: 1.5px solid rgba(255, 255, 255, 0.4);
             letter-spacing: 0.5px;
@@ -165,7 +164,7 @@
         .creative-counter span {
             color: #e5b094;
             font-variant-numeric: tabular-nums;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
         }
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
@@ -257,7 +256,7 @@
             gap: 6px;
         }
 
-        .theme-toggle, .admin-trigger-btn, .orders-log-btn {
+        .theme-toggle, .admin-trigger-btn {
             width: 38px;
             height: 38px;
             background: var(--bg);
@@ -272,7 +271,7 @@
             box-shadow: 0 2px 6px var(--card-shadow);
             transition: transform 0.15s ease;
         }
-        .theme-toggle:active, .admin-trigger-btn:active, .orders-log-btn:active {
+        .theme-toggle:active, .admin-trigger-btn:active {
             transform: scale(0.92);
         }
 
@@ -1182,7 +1181,7 @@
     <div id="splash-screen">
         <div class="loader-content">
             <div class="loading-bar"><span id="progressBarFill"></span></div>
-            <div class="creative-counter">Food Factory - with love <span id="loadPercentage">0</span>%</div>
+            <div class="creative-counter"><span id="loadPercentage">0</span>%</div>
         </div>
     </div>
 
@@ -1203,7 +1202,6 @@
                     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
                     <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
                 </div>
-                <button class="orders-log-btn" onclick="openOrdersLogDirectly()" title="سجل الطلبات">📜</button>
             </div>
             
             <div class="header-logo-container">
@@ -1587,7 +1585,6 @@
         const IMAGES_PATH = "./images/"; 
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA4Xr8wQ9COOV3ZTkrJHRnt3T6Rd_W4fzL-0jSxf8KxAFYwlAQXvCy5_Q9lVRpTz3lddtozuWGL8rM/pub?output=csv";
 
-        // مناطق التوصيل
         const deliveryAreas = [
             { name: "الدوحة ومحيطها", fee: 20 },
             { name: "الريان", fee: 25 },
@@ -1678,7 +1675,6 @@
             updateCart();
         }
 
-        // بيانات المنيو الافتراضية
         let defaultInitialMenu = [
             { id: "item_1", category: "تجهيزات الشواء", name: "كفته لحم للشوي / للفرن", desc: "تجهيز طازج متبل وجاهز للشوي أو الفرن", img: IMAGES_PATH + "kofta.jpg", price: "75", variants: null },
             { id: "item_2", category: "تجهيزات الشواء", name: "قطع لحم شقف للشوي", desc: "لحم بقري/غنم طازج متبل للشوي", img: IMAGES_PATH + "meat_chunks.jpg", price: "80", variants: null },
@@ -1897,7 +1893,7 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             let count = 0;
-            const duration = 2500;
+            const duration = 4500;
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
@@ -2194,7 +2190,7 @@
 
             setTimeout(() => {
                 document.getElementById('splash-screen').classList.add('splash-hidden');
-            }, 2500);
+            }, 4500);
         }
 
         function renderFooterBranches() {
@@ -2248,7 +2244,7 @@
 
                 let isEnabled = itemStatusMap[item.name] !== false;
                 let disabledClass = isEnabled ? '' : 'disabled-item';
-                let btnText = isEnabled ? 'طلب' : 'غير متوفر';
+                let btnText = isEnabled ? 'اطلب الآن' : 'غير متوفر';
 
                 const safeName = item.name.replace(/'/g, "\\'");
                 const safeImg = item.img.replace(/'/g, "\\'");
@@ -2327,7 +2323,7 @@
             btn.innerHTML = '✓ تمت الإضافة'; 
             btn.classList.add('added');
             setTimeout(() => { 
-                btn.innerHTML = 'طلب'; 
+                btn.innerHTML = 'اطلب الآن'; 
                 btn.classList.remove('added'); 
             }, 2000);
             
@@ -2556,7 +2552,7 @@
             const pass = document.getElementById('quickOrdersPassInput').value.trim();
             if (!pass) return alert("يرجى إدخال كلمة المرور");
 
-            if (pass === "1133") {
+            if (pass === "1") {
                 let authCount = parseInt(localStorage.getItem('cashier_auth_count') || '0');
                 authCount += 1;
                 localStorage.setItem('cashier_auth_count', authCount);
@@ -2642,7 +2638,7 @@
                 const db = window.db;
                 const passDoc = await getDoc(doc(db, "settings", "password"));
                 
-                const correctPass = passDoc.exists() ? String(passDoc.data().value).trim() : "1234";
+                const correctPass = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
                 if (inputPass === correctPass) {
                     const alreadyVerified = localStorage.getItem('is_cashier_device') === 'true';
@@ -2912,7 +2908,7 @@
                 const { doc, getDoc, setDoc } = window.firebaseModules;
                 const db = window.db;
                 const passDoc = await getDoc(doc(db, "settings", "password"));
-                const realCurrent = passDoc.exists() ? String(passDoc.data().value).trim() : "1234";
+                const realCurrent = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
                 if (currentPass !== realCurrent) {
                     return alert("كلمة المرور الحالية غير صحيحة");
