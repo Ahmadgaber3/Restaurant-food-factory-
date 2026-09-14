@@ -6,7 +6,7 @@
     <title>Food Factory | المنيو الرسمي</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#8c5847">
+    <meta name="theme-color" content="#d98282">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -16,19 +16,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f8f6f5; 
+            --bg: #fdf8f7; 
             --main-text: #2d2421; 
             --desc-text: #6b5b55;
-            --accent: #8c5847; 
-            --accent-hover: #734537;
+            --accent: #d98282; 
+            --accent-hover: #c46c6c;
             --yellow-gold: #b3734a;
-            --address-tag: #8c5847;
+            --address-tag: #d98282;
             --white: #ffffff; 
             --glass: rgba(255, 255, 255, 0.95);
             --success-dark: #2e7d32; 
             --header-bg: #ffffff;
-            --card-shadow: rgba(45, 36, 33, 0.1);
-            --border-color: #e2d7d2;
+            --card-shadow: rgba(45, 36, 33, 0.08);
+            --border-color: #f0e1dd;
         }
 
         .food-card[data-category*="عروض"],
@@ -105,13 +105,13 @@
 
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(circle, rgba(140, 88, 71, 0.15) 0%, rgba(0, 0, 0, 0.1) 100%), url('images/splash-bg.jpg');
+            background-image: radial-gradient(circle, rgba(217, 130, 130, 0.12) 0%, rgba(0, 0, 0, 0.05) 100%), url('images/splash-bg.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
-            padding: 0 20px 75px 20px;
+            padding: 0 20px 115px 20px; /* مرفوع للأعلى حوالي 1 سم */
             transition: 0.6s ease-out;
             filter: brightness(105%) contrast(100%);
         }
@@ -130,44 +130,98 @@
         .loading-bar { 
             width: 100%; 
             max-width: 260px; 
-            height: 8px; 
-            background: rgba(0, 0, 0, 0.15); 
+            height: 7px; 
+            background: rgba(217, 130, 130, 0.25); 
             margin: 0 auto 15px auto; 
             border-radius: 10px; 
             overflow: hidden; 
             position: relative; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
         .loading-bar span { 
             display: block; 
             width: 0%; 
             height: 100%; 
-            background: var(--accent); 
+            background: #d98282; 
             border-radius: 10px;
             transition: width 0.04s linear;
         }
         
         .creative-counter {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 900;
             color: #ffffff;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 8px 24px;
+            background: #d98282; /* اللون البينك المطابق للخلفية */
+            padding: 7px 24px;
             border-radius: 35px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 18px rgba(217, 130, 130, 0.45);
+            border: 1.5px solid rgba(255, 255, 255, 0.6);
             letter-spacing: 0.5px;
         }
         .creative-counter span {
-            color: #e5b094;
+            color: #ffffff;
             font-variant-numeric: tabular-nums;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
         }
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+
+        /* نافذة تمت الإضافة للسلة المنبثقة */
+        .toast-popup-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .toast-popup-card {
+            background: #ffffff;
+            border-radius: 26px;
+            padding: 28px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            min-width: 250px;
+            max-width: 320px;
+            animation: popToastIn 0.22s ease-out;
+        }
+        @keyframes popToastIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .toast-circle-check {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 2px solid #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .toast-circle-check svg {
+            width: 32px;
+            height: 32px;
+            stroke: #2e7d32;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .toast-popup-card span {
+            font-size: 1.12rem;
+            font-weight: 900;
+            color: #1a1a1a;
+            white-space: nowrap;
+        }
 
         .flavor-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -350,7 +404,7 @@
             color: #ffffff;
             padding: 0 8px;
             gap: 3px;
-            box-shadow: 0 3px 8px rgba(140, 88, 71, 0.35);
+            box-shadow: 0 3px 8px rgba(217, 130, 130, 0.35);
             transition: transform 0.15s ease;
             width: 100%;
         }
@@ -411,7 +465,7 @@
             width: 54px; 
             height: 54px; 
             border-radius: 16px; 
-            background: #e0e0e0; 
+            background: #f5ebe6; 
             overflow: hidden; 
             border: 2.5px solid transparent; 
             transition: 0.2s; 
@@ -434,7 +488,7 @@
         .food-card { background: var(--white); border-radius: 20px; margin-bottom: 12px; display: flex; padding: 12px 14px; gap: 12px; align-items: center; box-shadow: 0 3px 12px var(--card-shadow); border: 1px solid var(--border-color); }
         .food-card.disabled-item { opacity: 0.5; filter: grayscale(0.3); }
         
-        .item-img-box { width: 125px; height: 125px; border-radius: 16px; overflow: hidden; background: #e0e0e0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .item-img-box { width: 125px; height: 125px; border-radius: 16px; overflow: hidden; background: #f5ebe6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
         
         .food-info { flex: 1; position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 120px; }
@@ -467,7 +521,7 @@
         }
 
         .order-btn { 
-            background: var(--accent); 
+            background: var(--accent); /* البينك المتناسق */
             color: #ffffff; 
             border: 1px solid var(--accent); 
             padding: 8px 18px; 
@@ -475,7 +529,7 @@
             font-size: 0.85rem; 
             font-weight: 800; 
             cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(140, 88, 71, 0.28);
+            box-shadow: 0 4px 12px rgba(217, 130, 130, 0.35);
             transition: transform 0.15s ease; 
             display: inline-flex;
             align-items: center;
@@ -501,7 +555,7 @@
         .footer-info-container strong { color: var(--accent); display: block; margin-bottom: 5px; font-size: 0.95rem; }
         
         .complaints-box {
-            background: rgba(140, 88, 71, 0.08);
+            background: rgba(217, 130, 130, 0.08);
             border: 1.5px dashed var(--accent);
             border-radius: 16px;
             padding: 12px;
@@ -552,7 +606,7 @@
 
         .order-type-container { display: flex; background: var(--bg); padding: 6px; border-radius: 16px; margin: 15px 0; gap: 6px; border: 1px solid var(--border-color); }
         .order-type-btn { flex: 1; border: none; background: transparent; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--desc-text); transition: all 0.2s ease; }
-        .order-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(140, 88, 71, 0.2); }
+        .order-type-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 12px rgba(217, 130, 130, 0.3); }
 
         .user-fields input, .user-fields textarea { background: var(--bg); border: 1.5px solid var(--border-color); padding: 14px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; }
         #uAddr { transition: all 0.2s ease; }
@@ -584,7 +638,7 @@
         .chic-area-icon {
             font-size: 1.25rem;
             color: var(--accent);
-            background: rgba(140, 88, 71, 0.1);
+            background: rgba(217, 130, 130, 0.12);
             width: 38px;
             height: 38px;
             border-radius: 10px;
@@ -704,12 +758,12 @@
         }
         .area-item-card:hover, .area-item-card:active {
             border-color: var(--accent);
-            background: rgba(140, 88, 71, 0.04);
+            background: rgba(217, 130, 130, 0.05);
             transform: scale(0.99);
         }
         .area-item-card.selected {
             border-color: var(--accent);
-            background: rgba(140, 88, 71, 0.08);
+            background: rgba(217, 130, 130, 0.1);
         }
         .area-item-name {
             font-size: 0.92rem;
@@ -720,13 +774,13 @@
             gap: 6px;
         }
         .area-item-fee {
-            background: rgba(140, 88, 71, 0.12);
+            background: rgba(217, 130, 130, 0.14);
             color: var(--accent);
             font-size: 0.8rem;
             font-weight: 900;
             padding: 4px 10px;
             border-radius: 20px;
-            border: 1px solid rgba(140, 88, 71, 0.25);
+            border: 1px solid rgba(217, 130, 130, 0.3);
         }
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; }
@@ -828,7 +882,7 @@
             width: 62px;
             height: 62px;
             border-radius: 50%;
-            background: #f5ebe6;
+            background: #fdf2f2;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -972,7 +1026,7 @@
 
         .order-card-custom {
             background: #ffffff;
-            border: 1.5px solid #e2d7d2;
+            border: 1.5px solid #f0e1dd;
             border-radius: 20px;
             padding: 16px;
             margin-bottom: 18px;
@@ -1185,6 +1239,16 @@
         </div>
     </div>
 
+    <!-- نافذة تمت الإضافة للسلة بنجاح -->
+    <div class="toast-popup-modal" id="toastPopupModal">
+        <div class="toast-popup-card">
+            <div class="toast-circle-check">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>تمت الإضافة للسلة بنجاح!</span>
+        </div>
+    </div>
+
     <div class="flavor-modal" id="flavorModal" onclick="if(event.target==this) closeFlavorModal()">
         <div class="flavor-modal-content">
             <div class="flavor-modal-header">
@@ -1275,7 +1339,7 @@
                 <button class="admin-close" onclick="closeQuickOrdersAuthModal()">✕</button>
             </div>
             <div class="pass-form">
-                <div style="background: rgba(140, 88, 71, 0.08); border: 1.5px solid var(--accent); border-radius: 14px; padding: 10px; margin-bottom: 15px; font-weight: 800; font-size: 0.9rem; text-align: center; color: var(--accent);">
+                <div style="background: rgba(217, 130, 130, 0.08); border: 1.5px solid var(--accent); border-radius: 14px; padding: 10px; margin-bottom: 15px; font-weight: 800; font-size: 0.9rem; text-align: center; color: var(--accent);">
                     🔒 كلمة المرور مطلوبة لفتح سجل الطلبات:
                 </div>
                 <input type="password" id="quickOrdersPassInput" placeholder="أدخل كلمة المرور" onkeydown="if(event.key==='Enter') verifyQuickOrdersPassword()" autofocus>
@@ -1348,7 +1412,7 @@
                 <button class="admin-close" onclick="closeFloatingModal('contactsModal')">✕</button>
             </div>
             
-            <div style="background: rgba(140, 88, 71, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
+            <div style="background: rgba(217, 130, 130, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
                 <div class="admin-custom-input-group">
                     <label>📱 رقم استلام الأوردرات (واتساب المتجر):</label>
                     <input type="tel" id="edit_order_phone" placeholder="97470723952">
@@ -1439,7 +1503,7 @@
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
             <div id="cartItemsList"></div>
-            <div style="margin: 20px 0; padding: 15px; background: rgba(140, 88, 71, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="margin: 20px 0; padding: 15px; background: rgba(217, 130, 130, 0.08); border-radius: 18px; display: flex; flex-direction: column; gap: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
                     <span>مجموع الأصناف:</span>
                     <span id="itemsSubtotalAmount">0 ر.ق</span>
@@ -2301,6 +2365,15 @@
             card.dataset.currentPrice = price;
         }
 
+        function triggerAddedToast() {
+            const toast = document.getElementById('toastPopupModal');
+            if (!toast) return;
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 1000);
+        }
+
         function orderCardItem(e, btn, cardId, baseName, img) {
             const card = document.getElementById(cardId);
             if (!card) return;
@@ -2313,6 +2386,7 @@
             if (currentSize) finalName = `${baseName} (${currentSize})`;
 
             addToCart(e, btn, finalName, img, currentPrice, category);
+            triggerAddedToast();
         }
 
         function addToCart(e, btn, name, img, price, category) {
