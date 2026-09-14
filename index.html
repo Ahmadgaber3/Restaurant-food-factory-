@@ -111,7 +111,7 @@
             background-repeat: no-repeat;
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
-            padding: 0 20px 115px 20px; /* مرفوع للأعلى حوالي 1 سم */
+            padding: 0 20px 115px 20px;
             transition: 0.6s ease-out;
             filter: brightness(105%) contrast(100%);
         }
@@ -151,7 +151,7 @@
             font-size: 1.2rem;
             font-weight: 900;
             color: #ffffff;
-            background: #d98282; /* اللون البينك المطابق للخلفية */
+            background: #d98282;
             padding: 7px 24px;
             border-radius: 35px;
             display: inline-flex;
@@ -169,7 +169,6 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
-        /* نافذة تمت الإضافة للسلة المنبثقة */
         .toast-popup-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -521,7 +520,7 @@
         }
 
         .order-btn { 
-            background: var(--accent); /* البينك المتناسق */
+            background: var(--accent);
             color: #ffffff; 
             border: 1px solid var(--accent); 
             padding: 8px 18px; 
@@ -1647,7 +1646,7 @@
         });
 
         const IMAGES_PATH = "./images/"; 
-        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTA4Xr8wQ9COOV3ZTkrJHRnt3T6Rd_W4fzL-0jSxf8KxAFYwlAQXvCy5_Q9lVRpTz3lddtozuWGL8rM/pub?output=csv";
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT29nZRnpUjhJ_Ys_zMGj5P6t5oj-3P0yU0tFjBIu5yX93R-8zlgEEcmgUULS15ObAF9PQgig1CqZjp/pub?output=csv";
 
         const deliveryAreas = [
             { name: "الدوحة ومحيطها", fee: 20 },
@@ -1739,30 +1738,7 @@
             updateCart();
         }
 
-        let defaultInitialMenu = [
-            { id: "item_1", category: "تجهيزات الشواء", name: "كفته لحم للشوي / للفرن", desc: "تجهيز طازج متبل وجاهز للشوي أو الفرن", img: IMAGES_PATH + "kofta.jpg", price: "75", variants: null },
-            { id: "item_2", category: "تجهيزات الشواء", name: "قطع لحم شقف للشوي", desc: "لحم بقري/غنم طازج متبل للشوي", img: IMAGES_PATH + "meat_chunks.jpg", price: "80", variants: null },
-            { id: "item_3", category: "تجهيزات الشواء", name: "ريش متبله للشوي", desc: "ريش فاخرة متبلة على أصولها", img: IMAGES_PATH + "ribs.jpg", price: "حسب سعر اليوم", variants: null },
-            { id: "item_4", category: "تجهيزات الشواء", name: "كفته ارز مصري", desc: "كفتة أرز منزلية مميزة ومفرومة طازجة", img: IMAGES_PATH + "rice_kofta.jpg", price: "60", variants: null },
-            { id: "item_5", category: "تجهيزات الشواء", name: "دجاج متبل للشوي", desc: "دجاج كامل بتتبيلة الشوي الخاصة", img: IMAGES_PATH + "chicken_grill.jpg", price: "45", variants: null },
-            { id: "item_6", category: "تجهيزات الشواء", name: "صدور متبله للشوي", desc: "صدور دجاج مخلية متبلة وجاهزة", img: IMAGES_PATH + "chicken_breasts.jpg", price: "70", variants: null },
-            { 
-                id: "item_7", 
-                category: "بوكسات الجمعات", 
-                name: "بوكس تشيز كيك متنوع", 
-                desc: "تشكيلة من قطع التشيز كيك الفاخرة للجمعات", 
-                img: IMAGES_PATH + "cheesecake_box.jpg", 
-                price: "120", 
-                variants: [
-                    { size: "وسط", price: "120" },
-                    { size: "كبير", price: "150" }
-                ] 
-            },
-            { id: "item_8", category: "بوكسات الجمعات", name: "بوكس حلى الاوريو", desc: "طبقات من حلى الأوريو الغني واللذيذ", img: IMAGES_PATH + "oreo_box.jpg", price: "120", variants: null },
-            { id: "item_9", category: "بوكسات الجمعات", name: "بوكس ترفل متنوع", desc: "بوكس ترفل بنكهات متنوعة وفاخرة", img: IMAGES_PATH + "truffle_box.jpg", price: "150", variants: null }
-        ];
-
-        let menuData = [...defaultInitialMenu], cart = [];
+        let menuData = [], cart = [];
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
         let itemStatusMap = {}; 
@@ -1815,8 +1791,9 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                const freshUrl = GOOGLE_SHEET_CSV_URL + '&t=' + Date.now();
-                const response = await fetch(freshUrl);
+                // منع التخزين المؤقت بالكامل للحصول على أحدث تعديل فوراً
+                const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+                const response = await fetch(freshUrl, { cache: 'no-store' });
                 if (!response.ok) throw new Error("تعذر جلب ملف الشيت");
                 
                 const csvText = await response.text();
@@ -1929,6 +1906,18 @@
                 console.error("خطأ في المزامنة التلقائية للشيت:", e);
             }
         }
+
+        // فحص ومزامنة دورية كل 10 ثوانٍ لضمان التحديث المباشر
+        setInterval(() => {
+            autoSyncSheetInBackground();
+        }, 10000);
+
+        // مزامنة فورية عند الرجوع للتطبيق
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                autoSyncSheetInBackground();
+            }
+        });
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
@@ -2250,7 +2239,13 @@
             startCreativeCounter();
             renderFooterBranches();
             renderFooterComplaints();
-            renderNav();
+
+            // جلب البيانات من الشيت مباشرة من أول لحظة
+            const freshItems = await fetchMenuFromGoogleSheet();
+            if (freshItems && freshItems.length > 0) {
+                menuData = freshItems;
+                renderNav();
+            }
 
             setTimeout(() => {
                 document.getElementById('splash-screen').classList.add('splash-hidden');
