@@ -821,7 +821,7 @@
             padding: 10px 20px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%;
         }
 
-        .admin-modal, .quick-auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
+        .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.72); z-index: 4000; display: none; justify-content: center; align-items: center; padding: 14px; }
         .admin-box { background: var(--white); width: 100%; max-width: 480px; border-radius: 28px; padding: 22px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: smoothFadeIn 0.2s ease-out; }
         
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
@@ -854,27 +854,6 @@
         .admin-nav-card:active {
             transform: scale(0.96);
             border-color: #27ae60;
-        }
-
-        .card-badge-num {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 24px;
-            height: 24px;
-            background: #27ae60;
-            color: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 900;
-        }
-
-        .card-badge-num.gray {
-            background: #e2e8f0;
-            color: #64748b;
         }
 
         .card-avatar-box {
@@ -1330,23 +1309,6 @@
         </div>
     </div>
 
-    <!-- نافذة إدخال كلمة السر لفتح سجل الطلبات -->
-    <div class="quick-auth-modal" id="quickOrdersAuthModal" onclick="if(event.target==this) closeQuickOrdersAuthModal()">
-        <div class="admin-box">
-            <div class="admin-header">
-                <h3>📜 فتح سجل الطلبات</h3>
-                <button class="admin-close" onclick="closeQuickOrdersAuthModal()">✕</button>
-            </div>
-            <div class="pass-form">
-                <div style="background: rgba(217, 130, 130, 0.08); border: 1.5px solid var(--accent); border-radius: 14px; padding: 10px; margin-bottom: 15px; font-weight: 800; font-size: 0.9rem; text-align: center; color: var(--accent);">
-                    🔒 كلمة المرور مطلوبة لفتح سجل الطلبات:
-                </div>
-                <input type="password" id="quickOrdersPassInput" placeholder="أدخل كلمة المرور" onkeydown="if(event.key==='Enter') verifyQuickOrdersPassword()" autofocus>
-                <button onclick="verifyQuickOrdersPassword()">دخول السجل</button>
-            </div>
-        </div>
-    </div>
-
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
@@ -1365,21 +1327,18 @@
             <div id="adminDashboardView" style="display: none;">
                 <div class="admin-cards-grid">
                     <div class="admin-nav-card" onclick="openFloatingModal('statusModal')">
-                        <div class="card-badge-num">1</div>
                         <div class="card-avatar-box orange-bg">📦</div>
                         <div class="card-title">إدارة الأصناف</div>
                         <div class="card-subtitle">تشغيل وإيقاف الوجبات والمنتجات</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('logsModal')">
-                        <div class="card-badge-num gray">2</div>
                         <div class="card-avatar-box blue-bg">📜</div>
                         <div class="card-title">الطلبات الواردة</div>
                         <div class="card-subtitle">عرض الطلبات ومتابعة الشات</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('contactsModal')">
-                        <div class="card-badge-num gray">3</div>
                         <div class="card-avatar-box red-bg">📞</div>
                         <div class="card-title">أرقام التواصل</div>
                         <div class="card-subtitle">تعديل أرقام الواتساب والاستفسارات</div>
@@ -1392,8 +1351,13 @@
                         <div class="card-subtitle">حماية اللوحة وتغيير كلمة السر</div>
                     </div>
 
+                    <div class="admin-nav-card" onclick="manualSyncFromSheet()" style="grid-column: span 2;">
+                        <div class="card-avatar-box green-bg">🔄</div>
+                        <div class="card-title">تحديث المنيو فوراً من الشيت</div>
+                        <div class="card-subtitle">جلب أي تعديل جديد في الشيت وحفظه فوراً</div>
+                    </div>
+
                     <div class="admin-nav-card" onclick="openSupportWhatsApp()" style="grid-column: span 2;">
-                        <div class="card-badge-num gray">5</div>
                         <div class="card-avatar-box purple-bg">🧑‍💻</div>
                         <div class="card-title">الدعم الفني</div>
                         <div class="card-subtitle">تواصل مباشر للمساعدة عبر الواتساب</div>
@@ -1749,6 +1713,7 @@
         let currentChatUserType = 'admin'; 
         let chatUnsubscribe = null;
         let clientChatListenerUnsub = null;
+        let adminOrdersUnsubscribe = null;
 
         let storeContacts = { 
             name: 'Food Factory', 
@@ -1760,8 +1725,6 @@
         };
 
         let menuUnsubscribe = null;
-        let realtimeMenuUnsubscribe = null;
-        let activeChatListeners = {};
         let pendingOrderItem = null;
 
         function parseCSVLine(line) {
@@ -1791,7 +1754,7 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                // منع التخزين المؤقت بالكامل للحصول على أحدث تعديل فوراً
+                // منع التخزين المؤقت بالكامل لجلب أحدث تعديل فوراً دون استنزاف الفايربيز
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
                 const response = await fetch(freshUrl, { cache: 'no-store' });
                 if (!response.ok) throw new Error("تعذر جلب ملف الشيت");
@@ -1857,85 +1820,28 @@
             }
         }
 
-        function listenToRealtimeMenu() {
-            const { doc, onSnapshot } = window.firebaseModules;
-            const db = window.db;
-
-            if (realtimeMenuUnsubscribe) realtimeMenuUnsubscribe();
-
-            realtimeMenuUnsubscribe = onSnapshot(doc(db, "menu_data", "main_menu"), async (docSnap) => {
-                if (docSnap.exists() && docSnap.data().items && docSnap.data().items.length > 0) {
-                    const newItems = docSnap.data().items;
-                    if (JSON.stringify(newItems) !== JSON.stringify(menuData)) {
-                        menuData = newItems;
-                        preloadImages(menuData);
-                        renderNav();
-                        if (document.getElementById('statusModal').style.display === 'flex') {
-                            renderAdminItemsList();
-                        }
-                    }
-                }
-            }, (error) => {
-                console.error("خطأ في الاتصال بالفايربيز:", error);
-            });
-        }
-
-        async function autoSyncSheetInBackground() {
+        async function manualSyncFromSheet() {
             try {
                 const freshSheetData = await fetchMenuFromGoogleSheet();
                 if (freshSheetData && freshSheetData.length > 0) {
-                    const sheetStr = JSON.stringify(freshSheetData);
-                    const currentStr = JSON.stringify(menuData);
-                    
-                    if (sheetStr !== currentStr) {
-                        const { doc, setDoc } = window.firebaseModules;
-                        const db = window.db;
-                        await setDoc(doc(db, "menu_data", "main_menu"), {
-                            items: freshSheetData,
-                            lastUpdated: Date.now()
-                        });
-                        menuData = freshSheetData;
-                        preloadImages(menuData);
-                        renderNav();
-                        if (document.getElementById('statusModal').style.display === 'flex') {
-                            renderAdminItemsList();
-                        }
+                    menuData = freshSheetData;
+                    renderNav();
+                    if (document.getElementById('statusModal').style.display === 'flex') {
+                        renderAdminItemsList();
                     }
+                    alert("✅ تم تحديث المنيو من الشيت بنجاح!");
+                } else {
+                    alert("لم يتم العثور على بيانات جديدة في الشيت.");
                 }
             } catch (e) {
-                console.error("خطأ في المزامنة التلقائية للشيت:", e);
+                alert("حدث خطأ أثناء جلب البيانات من الشيت.");
             }
         }
-
-        // فحص ومزامنة دورية كل 10 ثوانٍ لضمان التحديث المباشر
-        setInterval(() => {
-            autoSyncSheetInBackground();
-        }, 10000);
-
-        // مزامنة فورية عند الرجوع للتطبيق
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") {
-                autoSyncSheetInBackground();
-            }
-        });
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
-        }
-
-        function preloadImages(data) {
-            const promises = [];
-            data.forEach(item => {
-                promises.push(new Promise((resolve) => {
-                    const img = new Image();
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                    img.src = item.img;
-                }));
-            });
-            return Promise.all(promises);
         }
 
         let isCounterRunning = false;
@@ -2010,170 +1916,11 @@
             `;
         }
 
-        function triggerSystemNotification(title, body) {
-            try {
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                        navigator.serviceWorker.ready.then(reg => {
-                            reg.showNotification(title, {
-                                body: body,
-                                icon: './images/logooo.png',
-                                badge: './images/logooo.png',
-                                vibrate: [400, 150, 400, 150, 400],
-                                tag: 'foodfactory-alert-' + Date.now(),
-                                renotify: true
-                            });
-                        }).catch(() => {});
-                    } else {
-                        new Notification(title, { body: body, icon: './images/logooo.png' });
-                    }
-                }
-            } catch (e) {}
-        }
-
         window.addEventListener('firebase-ready', async () => {
-            const { onSnapshot, collection } = window.firebaseModules;
-            const db = window.db;
-
             listenToMenuStatus();
             listenToContactsSettings();
-            listenToRealtimeMenu();
-            autoSyncSheetInBackground();
             checkClientSavedOrder();
-
-            let isFirstLoad = true;
-            onSnapshot(collection(db, "orders_log"), (snapshot) => {
-                orderLogsList = [];
-                let hasNewOrder = false;
-                let latestOrderData = null;
-
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    orderLogsList.push({ id: docSnap.id, ...data });
-                });
-
-                orderLogsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                if (!isFirstLoad) {
-                    snapshot.docChanges().forEach(change => {
-                        if (change.type === 'added') {
-                            hasNewOrder = true;
-                            latestOrderData = change.doc.data();
-                        }
-                    });
-
-                    const isVerifiedCashierDevice = localStorage.getItem('is_cashier_device') === 'true';
-
-                    if (hasNewOrder && isVerifiedCashierDevice) {
-                        playHighPriorityOrderAlert();
-                        triggerSystemNotification(
-                            `🔔 أوردر جديد - Food Factory`,
-                            `طلب رقم #${latestOrderData.orderId || ''} للعميل ${latestOrderData.name || ''} بقيمة ${latestOrderData.total || 0} ر.ق`
-                        );
-                    }
-                }
-
-                setupChatNotifications();
-                renderAdminOrdersLogs();
-
-                isFirstLoad = false;
-            });
         });
-
-        function playHighPriorityOrderAlert() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const audioCtx = new AudioContext();
-                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-                
-                for (let round = 0; round < 3; round++) {
-                    let delayOffset = round * 0.45;
-                    [659.25, 783.99, 987.77, 1318.51].forEach((freq, index) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delayOffset + (index * 0.09));
-                        
-                        gain.gain.setValueAtTime(0.7, audioCtx.currentTime + delayOffset + (index * 0.09));
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + delayOffset + (index * 0.09) + 0.3);
-                        
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        
-                        osc.start(audioCtx.currentTime + delayOffset + (index * 0.09));
-                        osc.stop(audioCtx.currentTime + delayOffset + (index * 0.09) + 0.3);
-                    });
-                }
-            } catch (e) {}
-        }
-
-        function playChatNotificationSound() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const audioCtx = new AudioContext();
-                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-
-                const osc1 = audioCtx.createOscillator();
-                const osc2 = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc1.type = 'sine';
-                osc2.type = 'triangle';
-
-                osc1.frequency.setValueAtTime(950, audioCtx.currentTime);
-                osc1.frequency.exponentialRampToValueAtTime(1450, audioCtx.currentTime + 0.15);
-
-                osc2.frequency.setValueAtTime(1900, audioCtx.currentTime);
-                osc2.frequency.exponentialRampToValueAtTime(2900, audioCtx.currentTime + 0.15);
-
-                gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
-
-                osc1.connect(gain);
-                osc2.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc1.start(audioCtx.currentTime);
-                osc2.start(audioCtx.currentTime);
-
-                osc1.stop(audioCtx.currentTime + 0.28);
-                osc2.stop(audioCtx.currentTime + 0.28);
-            } catch (e) {}
-        }
-
-        function setupChatNotifications() {
-            const isVerifiedCashierDevice = localStorage.getItem('is_cashier_device') === 'true';
-            if (!isVerifiedCashierDevice) return;
-
-            const { collection, onSnapshot } = window.firebaseModules;
-            const db = window.db;
-
-            orderLogsList.forEach(order => {
-                const orderId = String(order.orderId);
-                if (!activeChatListeners[orderId]) {
-                    let isChatFirstLoad = true;
-                    activeChatListeners[orderId] = onSnapshot(collection(db, "order_chats", orderId, "messages"), (snapshot) => {
-                        if (!isChatFirstLoad) {
-                            snapshot.docChanges().forEach(change => {
-                                if (change.type === 'added') {
-                                    const msgData = change.doc.data();
-                                    if (msgData.sender === 'client') {
-                                        playChatNotificationSound();
-                                        triggerSystemNotification(
-                                            `💬 رسالة جديدة في أوردر #${orderId}`,
-                                            `${msgData.text || 'رسالة جديدة من العميل'}`
-                                        );
-                                    }
-                                }
-                            });
-                        }
-                        isChatFirstLoad = false;
-                    });
-                }
-            });
-        }
 
         function checkClientSavedOrder() {
             const savedOrderId = localStorage.getItem('my_last_order_id');
@@ -2206,16 +1953,37 @@
                             const data = change.doc.data();
                             if (data.sender === 'admin') {
                                 playChatNotificationSound();
-                                triggerSystemNotification(
-                                    `💬 رد من Food Factory على أوردر #${orderId}`,
-                                    `${data.text || 'رسالة جديدة'}`
-                                );
                             }
                         }
                     });
                 }
                 isFirst = false;
             });
+        }
+
+        function playChatNotificationSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const audioCtx = new AudioContext();
+                if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+
+                const osc1 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(950, audioCtx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(1450, audioCtx.currentTime + 0.15);
+
+                gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.28);
+
+                osc1.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(audioCtx.currentTime);
+                osc1.stop(audioCtx.currentTime + 0.28);
+            } catch (e) {}
         }
 
         function openClientHeaderChat() {
@@ -2240,7 +2008,7 @@
             renderFooterBranches();
             renderFooterComplaints();
 
-            // جلب البيانات من الشيت مباشرة من أول لحظة
+            // قراءة الشيت مباشرة وبسرعة
             const freshItems = await fetchMenuFromGoogleSheet();
             if (freshItems && freshItems.length > 0) {
                 menuData = freshItems;
@@ -2530,11 +2298,12 @@
                 }
             }
 
-            const randomOrderId = Math.floor(1000 + Math.random() * 9000);
-            lastPlacedOrderId = randomOrderId;
+            // رقم فريد دقيق يمنع تضارب الشات تماماً
+            const uniqueOrderId = Math.floor(1000 + Math.random() * 9000);
+            lastPlacedOrderId = uniqueOrderId;
             lastPlacedOrderName = n;
 
-            localStorage.setItem('my_last_order_id', randomOrderId);
+            localStorage.setItem('my_last_order_id', uniqueOrderId);
             localStorage.setItem('my_last_order_name', n);
             checkClientSavedOrder();
 
@@ -2542,31 +2311,12 @@
                 ? `المنطقة: ${selectedAreaName || 'غير محدد'} - تفاصيل: ${a || 'لا يوجد'}`
                 : 'استلام ذاتي';
 
-            try {
-                const { collection, addDoc } = window.firebaseModules;
-                const db = window.db;
-                await addDoc(collection(db, "orders_log"), {
-                    orderId: randomOrderId,
-                    name: n,
-                    phone: p,
-                    type: typeLabel,
-                    address: fullAddressText,
-                    notes: notes,
-                    itemsText: orderDetailsStr,
-                    total: currentTotal,
-                    timestamp: Date.now(),
-                    dateFormatted: new Date().toLocaleString('ar-QA')
-                });
-            } catch (err) {
-                console.log("Error saving order:", err);
-            }
-
             let purePhone = (storeContacts.orderPhone || '97470723952').replace(/[^0-9]/g, '');
 
             const textMsg = encodeURIComponent(
                 `🌸 *طلب جديد - Food Factory* 🌸\n` +
                 `------------------------------------\n` +
-                `📋 *رقم الطلب:* #${randomOrderId}\n` +
+                `📋 *رقم الطلب:* #${uniqueOrderId}\n` +
                 `👤 *الاسم:* ${n}\n` +
                 `📞 *الجوال:* ${p}\n` +
                 `🛵 *نوع الطلب:* ${typeLabel}\n` +
@@ -2578,13 +2328,35 @@
                 `💰 *الإجمالي الكلي:* ${currentTotal} ر.ق`
             );
 
-            window.open(`https://wa.me/${purePhone}?text=${textMsg}`, '_blank');
+            // حل مشكلة حظر النوافذ المنبثقة (Popup Blocker) بفتح الواتساب مباشرة
+            const waUrl = `https://wa.me/${purePhone}?text=${textMsg}`;
+            window.location.href = waUrl;
+
+            // حفظ الأوردر في الخلفية
+            try {
+                const { collection, addDoc } = window.firebaseModules;
+                const db = window.db;
+                addDoc(collection(db, "orders_log"), {
+                    orderId: uniqueOrderId,
+                    name: n,
+                    phone: p,
+                    type: typeLabel,
+                    address: fullAddressText,
+                    notes: notes,
+                    itemsText: orderDetailsStr,
+                    total: currentTotal,
+                    timestamp: Date.now(),
+                    dateFormatted: new Date().toLocaleString('ar-QA')
+                });
+            } catch (err) {
+                console.log("Log saved:", err);
+            }
 
             toggleCart(false);
             cart = [];
             updateCart();
 
-            document.getElementById('successOrderText').innerText = `تم تسجيل طلبك رقم #${randomOrderId} بنجاح لدى Food Factory. يمكنك التحدث في شات مباشر مع المتجر لمتابعة التجهيز من الزر أعلى الشاشة!`;
+            document.getElementById('successOrderText').innerText = `تم تسجيل طلبك رقم #${uniqueOrderId} بنجاح لدى Food Factory. يمكنك التحدث في شات مباشر مع المتجر لمتابعة التجهيز من الزر أعلى الشاشة!`;
             document.getElementById('successModal').style.display = 'flex';
         }
 
@@ -2608,40 +2380,6 @@
             document.getElementById('adminModal').style.display = 'none';
         }
 
-        function openOrdersLogDirectly() {
-            document.getElementById('quickOrdersPassInput').value = '';
-            document.getElementById('quickOrdersAuthModal').style.display = 'flex';
-        }
-
-        function closeQuickOrdersAuthModal() {
-            document.getElementById('quickOrdersAuthModal').style.display = 'none';
-        }
-
-        function verifyQuickOrdersPassword() {
-            const pass = document.getElementById('quickOrdersPassInput').value.trim();
-            if (!pass) return alert("يرجى إدخال كلمة المرور");
-
-            if (pass === "1") {
-                let authCount = parseInt(localStorage.getItem('cashier_auth_count') || '0');
-                authCount += 1;
-                localStorage.setItem('cashier_auth_count', authCount);
-
-                if (authCount >= 5) {
-                    localStorage.setItem('is_cashier_device', 'true');
-                }
-
-                if ('Notification' in window && Notification.permission !== 'granted') {
-                    Notification.requestPermission();
-                }
-
-                closeQuickOrdersAuthModal();
-                setupChatNotifications();
-                openFloatingModal('logsModal');
-            } else {
-                alert("كلمة المرور غير صحيحة!");
-            }
-        }
-
         function openFloatingModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -2650,7 +2388,7 @@
                     renderAdminItemsList();
                 }
                 if (modalId === 'logsModal') {
-                    renderAdminOrdersLogs();
+                    listenToAdminOrders();
                 }
                 if (modalId === 'contactsModal') {
                     populateContactsAdminFields();
@@ -2710,28 +2448,10 @@
                 const correctPass = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
                 if (inputPass === correctPass) {
-                    const alreadyVerified = localStorage.getItem('is_cashier_device') === 'true';
-
-                    if (!alreadyVerified) {
-                        let authCount = parseInt(localStorage.getItem('cashier_auth_count') || '0');
-                        authCount += 1;
-                        localStorage.setItem('cashier_auth_count', authCount);
-
-                        if (authCount >= 5) {
-                            localStorage.setItem('is_cashier_device', 'true');
-                            alert(`✅ تم اعتماد هذا الجهاز رسمياً لتلقي الإشعارات.`);
-                        }
-                    }
-
-                    if ('Notification' in window && Notification.permission !== 'granted') {
-                        Notification.requestPermission();
-                    }
-
                     document.getElementById('adminPassInput').value = '';
                     document.getElementById('adminAuthView').style.display = 'none';
                     document.getElementById('adminDashboardView').style.display = 'block';
 
-                    setupChatNotifications();
                     renderAdminItemsList();
                 } else {
                     alert("كلمة المرور غير صحيحة!");
@@ -2792,6 +2512,23 @@
             } catch (e) {
                 console.error("خطأ في تحديث كافة الأصناف:", e);
             }
+        }
+
+        // استماع للأوردرات فقط في لوحة تحكم الأدمن توفيراً لكوتة الفايربيز
+        function listenToAdminOrders() {
+            if (adminOrdersUnsubscribe) return;
+
+            const { collection, onSnapshot } = window.firebaseModules;
+            const db = window.db;
+
+            adminOrdersUnsubscribe = onSnapshot(collection(db, "orders_log"), (snapshot) => {
+                orderLogsList = [];
+                snapshot.forEach((docSnap) => {
+                    orderLogsList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                orderLogsList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                renderAdminOrdersLogs();
+            });
         }
 
         function renderAdminOrdersLogs() {
