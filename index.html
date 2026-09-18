@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -169,6 +169,7 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
+        /* نافذة تمت الإضافة للسلة الأصلية */
         .toast-popup-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -220,6 +221,153 @@
             font-weight: 900;
             color: #1a1a1a;
             white-space: nowrap;
+        }
+
+        /* نافذة تخصيص البوكس */
+        .box-builder-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 10002;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .box-builder-card {
+            background: #ffffff;
+            border-radius: 26px;
+            padding: 22px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+            max-height: 90vh;
+            animation: popToastIn 0.22s ease-out;
+            border: 1.5px solid var(--border-color);
+        }
+        .box-builder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .box-builder-title {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .box-builder-close {
+            background: var(--bg);
+            border: 1px solid var(--border-color);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: 900;
+            cursor: pointer;
+            color: var(--main-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+        .box-builder-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--main-text);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .box-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        .box-toggle-btn {
+            background: var(--bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .box-toggle-btn.active {
+            border-color: var(--accent);
+            background: rgba(217, 130, 130, 0.12);
+            color: var(--accent);
+        }
+        .box-toggle-btn .btn-title {
+            font-size: 0.9rem;
+            font-weight: 900;
+        }
+        .box-toggle-btn .btn-sub {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--yellow-gold);
+        }
+
+        .box-dishes-scroll {
+            overflow-y: auto;
+            max-height: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-left: 2px;
+            margin-bottom: 14px;
+        }
+        .box-dish-item {
+            background: var(--bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            padding: 9px 12px;
+            font-size: 0.86rem;
+            font-weight: 800;
+            color: var(--main-text);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.15s ease;
+        }
+        .box-dish-item.selected {
+            border-color: #2e7d32;
+            background: rgba(46, 125, 50, 0.08);
+            color: #2e7d32;
+        }
+        .box-dish-item.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .box-builder-submit-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.15s ease;
+        }
+        .box-builder-submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
         }
 
         .flavor-modal {
@@ -1217,13 +1365,64 @@
         </div>
     </div>
 
-    <!-- نافذة تمت الإضافة للسلة بنجاح -->
+    <!-- نافذة تمت الإضافة للسلة الأصلية -->
     <div class="toast-popup-modal" id="toastPopupModal">
         <div class="toast-popup-card">
             <div class="toast-circle-check">
                 <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <span>تمت الإضافة للسلة بنجاح!</span>
+        </div>
+    </div>
+
+    <!-- نافذة تخصيص البوكس بنظام كارت منبثق أنيق -->
+    <div class="box-builder-modal" id="boxBuilderModal" onclick="if(event.target==this) closeBoxModal()">
+        <div class="box-builder-card">
+            <div class="box-builder-header">
+                <span class="box-builder-title" id="boxBuilderTitle">🍱 تخصيص البوكس</span>
+                <button class="box-builder-close" onclick="closeBoxModal()">✕</button>
+            </div>
+
+            <!-- 1. اختيار الحجم (وسط أو كبير فقط) -->
+            <div class="box-builder-label">
+                <span>1. اختر الحجم:</span>
+            </div>
+            <div class="box-row-grid">
+                <div class="box-toggle-btn active" id="sizeOpt_M" onclick="selectBoxSize('M')">
+                    <span class="btn-title">بوكس وسط</span>
+                    <span class="btn-sub">2 - 4 أفراد</span>
+                </div>
+                <div class="box-toggle-btn" id="sizeOpt_L" onclick="selectBoxSize('L')">
+                    <span class="btn-title">بوكس كبير</span>
+                    <span class="btn-sub">للجمعات والعائلة</span>
+                </div>
+            </div>
+
+            <!-- 2. اختيار باقة الأصناف والسعر -->
+            <div class="box-builder-label">
+                <span>2. عدد الأصناف والسعر:</span>
+            </div>
+            <div class="box-row-grid">
+                <div class="box-toggle-btn active" id="countOpt_4" onclick="selectBoxCount(4)">
+                    <span class="btn-title">4 أصناف فقط</span>
+                    <span class="btn-sub" id="countPriceVal_4">0 ر.ق</span>
+                </div>
+                <div class="box-toggle-btn" id="countOpt_6" onclick="selectBoxCount(6)">
+                    <span class="btn-title">6 أصناف كاملة</span>
+                    <span class="btn-sub" id="countPriceVal_6">0 ر.ق</span>
+                </div>
+            </div>
+
+            <!-- 3. قائمة الـ 6 أصناف الخاصة بالبوكس للاختيار منها -->
+            <div class="box-builder-label">
+                <span>3. حدد الأصناف المفضلة:</span>
+                <span id="boxDishesCounter" style="color: var(--accent); font-weight: 900; font-size: 0.8rem;"></span>
+            </div>
+            <div class="box-dishes-scroll" id="boxDishesContainer"></div>
+
+            <button class="box-builder-submit-btn" id="boxSubmitBtn" onclick="submitCustomBoxToCart()" disabled>
+                يرجى إكمال تحديد الأصناف
+            </button>
         </div>
     </div>
 
@@ -1345,7 +1544,6 @@
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')">
-                        <div class="card-badge-num gray">4</div>
                         <div class="card-avatar-box green-bg">👨‍💼</div>
                         <div class="card-title">تغيير كلمة المرور</div>
                         <div class="card-subtitle">حماية اللوحة وتغيير كلمة السر</div>
@@ -1367,7 +1565,6 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل الأرقام -->
     <div class="floating-sub-modal" id="contactsModal" onclick="if(event.target==this) closeFloatingModal('contactsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
@@ -1725,7 +1922,145 @@
         };
 
         let menuUnsubscribe = null;
-        let pendingOrderItem = null;
+
+        /* ========================================================
+           إدارة البوكسات: الحجمين (وسط / كبير) وخياري الأصناف (4 أو 6)
+           ======================================================== */
+        let activeBoxOrder = {
+            item: null,
+            size: 'M', // M (وسط) أو L (كبير)
+            count: 4,  // 4 أو 6
+            selectedDishes: []
+        };
+
+        function openBoxBuilder(item) {
+            activeBoxOrder.item = item;
+            activeBoxOrder.size = 'M';
+            activeBoxOrder.count = 4;
+            activeBoxOrder.selectedDishes = [];
+
+            document.getElementById('boxBuilderTitle').innerText = `🍱 ${item.name}`;
+
+            updateBoxPriceLabels();
+            renderBoxDishesList();
+            refreshBoxCounterAndButton();
+
+            document.getElementById('boxBuilderModal').style.display = 'flex';
+        }
+
+        function closeBoxModal() {
+            document.getElementById('boxBuilderModal').style.display = 'none';
+        }
+
+        function selectBoxSize(size) {
+            activeBoxOrder.size = size;
+            document.getElementById('sizeOpt_M').classList.toggle('active', size === 'M');
+            document.getElementById('sizeOpt_L').classList.toggle('active', size === 'L');
+
+            updateBoxPriceLabels();
+            refreshBoxCounterAndButton();
+        }
+
+        function selectBoxCount(count) {
+            activeBoxOrder.count = count;
+            document.getElementById('countOpt_4').classList.toggle('active', count === 4);
+            document.getElementById('countOpt_6').classList.toggle('active', count === 6);
+
+            if (activeBoxOrder.selectedDishes.length > count) {
+                activeBoxOrder.selectedDishes = activeBoxOrder.selectedDishes.slice(0, count);
+            }
+
+            renderBoxDishesList();
+            refreshBoxCounterAndButton();
+        }
+
+        function getActiveBoxPrice() {
+            const item = activeBoxOrder.item;
+            if (!item) return 0;
+            if (activeBoxOrder.size === 'M') {
+                return activeBoxOrder.count === 4 ? item.price_m4 : item.price_m6;
+            } else {
+                return activeBoxOrder.count === 4 ? item.price_l4 : item.price_l6;
+            }
+        }
+
+        function updateBoxPriceLabels() {
+            const item = activeBoxOrder.item;
+            if (!item) return;
+
+            const p4 = activeBoxOrder.size === 'M' ? item.price_m4 : item.price_l4;
+            const p6 = activeBoxOrder.size === 'M' ? item.price_m6 : item.price_l6;
+
+            document.getElementById('countPriceVal_4').innerText = `${p4} ر.ق`;
+            document.getElementById('countPriceVal_6').innerText = `${p6} ر.ق`;
+        }
+
+        function renderBoxDishesList() {
+            const container = document.getElementById('boxDishesContainer');
+            const dishes = activeBoxOrder.item.dishes || [];
+            const max = activeBoxOrder.count;
+
+            container.innerHTML = dishes.map(dish => {
+                const isSelected = activeBoxOrder.selectedDishes.includes(dish);
+                const isMax = !isSelected && activeBoxOrder.selectedDishes.length >= max;
+                const safeDish = dish.replace(/'/g, "\\'");
+
+                return `
+                <div class="box-dish-item ${isSelected ? 'selected' : ''} ${isMax ? 'disabled' : ''}" 
+                     onclick="toggleBoxDishChoice('${safeDish}')">
+                    <span>${dish}</span>
+                    <span style="font-size: 0.8rem;">${isSelected ? '✓ تم الاختيار' : '+ اختيار'}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleBoxDishChoice(dish) {
+            const max = activeBoxOrder.count;
+            const idx = activeBoxOrder.selectedDishes.indexOf(dish);
+
+            if (idx > -1) {
+                activeBoxOrder.selectedDishes.splice(idx, 1);
+            } else {
+                if (activeBoxOrder.selectedDishes.length >= max) return;
+                activeBoxOrder.selectedDishes.push(dish);
+            }
+
+            renderBoxDishesList();
+            refreshBoxCounterAndButton();
+        }
+
+        function refreshBoxCounterAndButton() {
+            const cur = activeBoxOrder.selectedDishes.length;
+            const max = activeBoxOrder.count;
+            const tracker = document.getElementById('boxDishesCounter');
+            const submitBtn = document.getElementById('boxSubmitBtn');
+            const price = getActiveBoxPrice();
+
+            tracker.innerText = `(${cur} من ${max})`;
+
+            if (cur === max) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = `إضافة للسلة (${price} ر.ق)`;
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.innerText = `يرجى تحديد ${max - cur} صنف إضافي`;
+            }
+        }
+
+        function submitCustomBoxToCart() {
+            const max = activeBoxOrder.count;
+            if (activeBoxOrder.selectedDishes.length !== max) return;
+
+            const item = activeBoxOrder.item;
+            const sizeLabel = activeBoxOrder.size === 'M' ? 'وسط' : 'كبير';
+            const price = getActiveBoxPrice();
+
+            const fullItemTitle = `${item.name} [حجم ${sizeLabel} - ${max} أصناف] (${activeBoxOrder.selectedDishes.join(' + ')})`;
+
+            closeBoxModal();
+            addToCart(null, null, fullItemTitle, item.img, price, item.category);
+            triggerAddedToast();
+        }
 
         function parseCSVLine(line) {
             let result = [];
@@ -1754,7 +2089,6 @@
 
         async function fetchMenuFromGoogleSheet() {
             try {
-                // منع التخزين المؤقت بالكامل لجلب أحدث تعديل فوراً دون استنزاف الفايربيز
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
                 const response = await fetch(freshUrl, { cache: 'no-store' });
                 if (!response.ok) throw new Error("تعذر جلب ملف الشيت");
@@ -1772,47 +2106,95 @@
                     const category = cols[0] ? cols[0].trim() : "عام";
                     const name = cols[1] ? cols[1].trim() : "";
                     
-                    const priceNormal = cleanVal(cols[2]);
-                    const priceL = cleanVal(cols[3]);
-                    const priceM = cleanVal(cols[4]);
-                    const priceD = cleanVal(cols[5]);
-                    const priceS = cleanVal(cols[6]);
-                    const desc = cols[7] ? cols[7].trim() : "";
+                    // قراءة الأعمدة بدقة حسب ترتيب الشيت
+                    const priceNormal = cleanVal(cols[2]); // عمود C: السعر العادي
+                    const priceS      = cleanVal(cols[3]); // عمود D: صغير S
+                    const priceM      = cleanVal(cols[4]); // عمود E: وسط M
+                    const priceL      = cleanVal(cols[5]); // عمود F: كبير L
+
+                    // أسعار البوكسات الخاصة (كبير 6، وسط 6، كبير 4، وسط 4)
+                    const priceL6 = cleanVal(cols[6]);     // عمود G: كبير 6 أصناف
+                    const priceM6 = cleanVal(cols[7]);     // عمود H: وسط 6 أصناف
+                    const priceL4 = cleanVal(cols[8]);     // عمود I: كبير 4 أصناف
+                    const priceM4 = cleanVal(cols[9]);     // عمود J: وسط 4 أصناف
+                    
+                    // الوصف أو مكونات البوكس
+                    const desc = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : "");
 
                     let cleanImageName = name.replace(/^\.\/images\//, '').replace(/^images\//, '');
                     cleanImageName = cleanImageName.replace(/\.(png|jpeg|webp|jpg)$/i, '');
                     let img = cleanImageName ? `${IMAGES_PATH}${cleanImageName}.jpg` : `${IMAGES_PATH}default.jpg`;
 
-                    let variants = [];
-                    if (priceS !== '' && priceD !== '') {
-                        variants = [
-                            { size: 'سينجل', price: priceS },
-                            { size: 'دبل', price: priceD }
-                        ];
-                    } else if (priceM !== '' && priceL !== '') {
-                        variants = [
-                            { size: 'وسط', price: priceM },
-                            { size: 'كبير', price: priceL }
-                        ];
-                    }
+                    const isBox = category.includes("بوكس") || name.includes("بوكس");
 
-                    let defaultPrice = "0";
-                    if (variants.length > 0) {
-                        defaultPrice = variants[0].price;
+                    if (isBox) {
+                        let parsedDishes = [];
+                        if (desc) {
+                            parsedDishes = desc.split(/[,،-]/).map(d => d.trim()).filter(d => d.length > 0);
+                        }
+                        if (parsedDishes.length === 0) {
+                            parsedDishes = ["صنف 1", "صنف 2", "صنف 3", "صنف 4", "صنف 5", "صنف 6"];
+                        }
+
+                        items.push({
+                            id: `box_${i}`,
+                            category: category,
+                            name: name,
+                            desc: desc,
+                            img: img,
+                            price: priceM4 || priceM6 || "120",
+                            isBox: true,
+                            price_l6: parseFloat(priceL6) || 250, // كبير 6 أصناف (عمود G)
+                            price_m6: parseFloat(priceM6) || 200, // وسط 6 أصناف (عمود H)
+                            price_l4: parseFloat(priceL4) || 180, // كبير 4 أصناف (عمود I)
+                            price_m4: parseFloat(priceM4) || 120, // وسط 4 أصناف (عمود J)
+                            dishes: parsedDishes
+                        });
                     } else {
-                        defaultPrice = priceNormal || priceL || priceM || priceD || priceS || "0";
-                    }
+                        // دعم خيارات الأحجام المتعددة (S / M / L) للأصناف العادية
+                        let variants = [];
+                        if (priceS !== '' && priceM !== '' && priceL !== '') {
+                            variants = [
+                                { size: 'صغير', price: priceS },
+                                { size: 'وسط', price: priceM },
+                                { size: 'كبير', price: priceL }
+                            ];
+                        } else if (priceS !== '' && priceL !== '') {
+                            variants = [
+                                { size: 'صغير', price: priceS },
+                                { size: 'كبير', price: priceL }
+                            ];
+                        } else if (priceM !== '' && priceL !== '') {
+                            variants = [
+                                { size: 'وسط', price: priceM },
+                                { size: 'كبير', price: priceL }
+                            ];
+                        } else if (priceS !== '' && priceM !== '') {
+                            variants = [
+                                { size: 'صغير', price: priceS },
+                                { size: 'وسط', price: priceM }
+                            ];
+                        }
 
-                    items.push({
-                        id: `item_${i}`,
-                        category: category,
-                        name: name,
-                        desc: desc,
-                        img: img,
-                        price: defaultPrice,
-                        variants: variants.length > 0 ? variants : null
-                    });
+                        let defaultPrice = "0";
+                        if (variants.length > 0) {
+                            defaultPrice = variants[0].price;
+                        } else {
+                            defaultPrice = priceNormal || priceL || priceM || priceS || "0";
+                        }
+
+                        items.push({
+                            id: `item_${i}`,
+                            category: category,
+                            name: name,
+                            desc: desc,
+                            img: img,
+                            price: defaultPrice,
+                            variants: variants.length > 0 ? variants : null
+                        });
+                    }
                 }
+
                 return items;
             } catch (err) {
                 console.error("خطأ أثناء جلب وتوزيع بيانات الشيت:", err);
@@ -2008,7 +2390,6 @@
             renderFooterBranches();
             renderFooterComplaints();
 
-            // قراءة الشيت مباشرة وبسرعة
             const freshItems = await fetchMenuFromGoogleSheet();
             if (freshItems && freshItems.length > 0) {
                 menuData = freshItems;
@@ -2078,7 +2459,7 @@
                 const cardId = `card_${idx}`;
 
                 let variantsHtml = '';
-                if (hasVariants) {
+                if (hasVariants && !item.isBox) {
                     variantsHtml = `
                     <div class="variants-container">
                         ${item.variants.map((v, vIdx) => `
@@ -2088,6 +2469,19 @@
                             </button>
                         `).join('')}
                     </div>`;
+                }
+
+                let buttonAction = '';
+                if (item.isBox) {
+                    buttonAction = `
+                    <button class="order-btn" ${!isEnabled ? 'disabled' : ''} onclick="openBoxBuilder(menuData[${menuData.indexOf(item)}])">
+                        تخصيص البوكس
+                    </button>`;
+                } else {
+                    buttonAction = `
+                    <button class="order-btn" ${!isEnabled ? 'disabled' : ''} onclick="orderCardItem(event, this, '${cardId}', '${safeName}', '${safeImg}')">
+                        ${btnText}
+                    </button>`;
                 }
 
                 return `
@@ -2100,12 +2494,12 @@
                     <div class="food-info">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                             <span class="food-name">${item.name}</span>
-                            <span class="food-price" id="${cardId}_price">${displayPrice}</span>
+                            <span class="food-price" id="${cardId}_price">${item.isBox ? 'حسب الحجم' : displayPrice}</span>
                         </div>
                         ${item.desc ? `<p class="food-desc">${item.desc}</p>` : ''}
                         ${variantsHtml}
                         <div style="display: flex; justify-content: flex-end; width: 100%; margin-top: 6px;">
-                            <button class="order-btn" ${!isEnabled ? 'disabled' : ''} onclick="orderCardItem(event, this, '${cardId}', '${safeName}', '${safeImg}')">${btnText}</button>
+                            ${buttonAction}
                         </div>
                     </div>
                 </div>`;
@@ -2157,12 +2551,14 @@
             
             cart.push({name: name, price: numericPrice, displayPrice: price, img: img, category: category || ''});
             
-            btn.innerHTML = '✓ تمت الإضافة'; 
-            btn.classList.add('added');
-            setTimeout(() => { 
-                btn.innerHTML = 'اطلب الآن'; 
-                btn.classList.remove('added'); 
-            }, 2000);
+            if (btn) {
+                btn.innerHTML = '✓ تمت الإضافة'; 
+                btn.classList.add('added');
+                setTimeout(() => { 
+                    btn.innerHTML = 'اطلب الآن'; 
+                    btn.classList.remove('added'); 
+                }, 2000);
+            }
             
             const fly = document.createElement('div'); fly.className = 'fly-item'; fly.innerHTML = '✨'; 
             const clickX = e && e.clientX ? e.clientX : window.innerWidth / 2;
@@ -2298,7 +2694,6 @@
                 }
             }
 
-            // رقم فريد دقيق يمنع تضارب الشات تماماً
             const uniqueOrderId = Math.floor(1000 + Math.random() * 9000);
             lastPlacedOrderId = uniqueOrderId;
             lastPlacedOrderName = n;
@@ -2328,11 +2723,9 @@
                 `💰 *الإجمالي الكلي:* ${currentTotal} ر.ق`
             );
 
-            // حل مشكلة حظر النوافذ المنبثقة (Popup Blocker) بفتح الواتساب مباشرة
             const waUrl = `https://wa.me/${purePhone}?text=${textMsg}`;
             window.location.href = waUrl;
 
-            // حفظ الأوردر في الخلفية
             try {
                 const { collection, addDoc } = window.firebaseModules;
                 const db = window.db;
@@ -2514,7 +2907,6 @@
             }
         }
 
-        // استماع للأوردرات فقط في لوحة تحكم الأدمن توفيراً لكوتة الفايربيز
         function listenToAdminOrders() {
             if (adminOrdersUnsubscribe) return;
 
