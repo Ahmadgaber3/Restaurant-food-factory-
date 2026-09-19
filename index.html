@@ -2087,15 +2087,6 @@
             return v === '' ? '' : v;
         }
 
-        // خريطة بسيطة ومباشرة لصور البوكسات بالأرقام
-        const customBoxImagesMap = {
-            "بوكسات الفطور": "1.jpg",
-            "بكج السعاده": "2.jpg",
-            "بكج يا زين جمعتنا": "3.jpg",
-            "بكج جمعة احباب": "4.jpg",
-            "بكج روق العائله": "5.jpg"
-        };
-
         async function fetchMenuFromGoogleSheet() {
             try {
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
@@ -2128,19 +2119,19 @@
                     const priceM4 = cleanVal(cols[9]);     // عمود J: وسط 4 أصناف
                     const desc    = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : ""); // عمود K: مكونات البوكس
 
-                    // نظام ربط الصور: البوكسات بالأرقام، وباقي الأصناف باسمها العادي
+                    // جعل صورة قسم بوكسات الفطور موحدة (1.jpg) لكل أصنافه، وباقي الأصناف حسب اسمها الطبيعي
                     let img = `${IMAGES_PATH}default.jpg`;
-                    const normalizedName = name.replace(/\s+/g, ' ').trim();
+                    const isBreakfastBoxCategory = category.includes("بوكسات الفطور") || category.includes("فطور");
 
-                    if (customBoxImagesMap[normalizedName]) {
-                        img = `${IMAGES_PATH}${customBoxImagesMap[normalizedName]}`;
+                    if (isBreakfastBoxCategory) {
+                        img = `${IMAGES_PATH}1.jpg`;
                     } else {
                         let cleanImageName = name.replace(/^\.\/images\//, '').replace(/^images\//, '');
                         cleanImageName = cleanImageName.replace(/\.(png|jpeg|webp|jpg)$/i, '').trim();
                         img = cleanImageName ? `${IMAGES_PATH}${cleanImageName}.jpg` : `${IMAGES_PATH}default.jpg`;
                     }
 
-                    const isBox = category.includes("بوكس") || name.includes("بوكس") || name.includes("بكج");
+                    const isBox = isBreakfastBoxCategory || category.includes("بوكس") || name.includes("بوكس") || name.includes("بكج");
 
                     if (isBox) {
                         let parsedDishes = [];
@@ -2241,14 +2232,14 @@
         }
 
         let isCounterRunning = false;
-        function startCreativeCounter() {
+        function startCreativeCounter(onComplete) {
             if (isCounterRunning) return;
             isCounterRunning = true;
 
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             let count = 0;
-            const duration = 4500;
+            const duration = 1800; // عداد سريع وسلس
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
@@ -2258,6 +2249,7 @@
                     if (barFill) barFill.style.width = count + '%';
                 } else {
                     clearInterval(timer);
+                    if (onComplete) onComplete();
                 }
             }, intervalTime);
         }
@@ -2400,19 +2392,31 @@
         }
 
         async function loadMenu() {
-            startCreativeCounter();
             renderFooterBranches();
             renderFooterComplaints();
+
+            let menuLoaded = false;
+            let counterFinished = false;
+
+            function tryDismissSplashScreen() {
+                if (menuLoaded && counterFinished) {
+                    const splash = document.getElementById('splash-screen');
+                    if (splash) splash.classList.add('splash-hidden');
+                }
+            }
+
+            startCreativeCounter(() => {
+                counterFinished = true;
+                tryDismissSplashScreen();
+            });
 
             const freshItems = await fetchMenuFromGoogleSheet();
             if (freshItems && freshItems.length > 0) {
                 menuData = freshItems;
                 renderNav();
             }
-
-            setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('splash-hidden');
-            }, 4500);
+            menuLoaded = true;
+            tryDismissSplashScreen();
         }
 
         function renderFooterBranches() {
@@ -2432,7 +2436,6 @@
             }
 
             document.getElementById('catNav').innerHTML = uniqueCats.map(cat => {
-                // ضبط صورة قسم بوكسات الفطور لتكون 1.jpg تلقائياً، وباقي الأقسام باسمها
                 let catImg = `${cat}.jpg`;
                 if (cat.includes("بوكسات") || cat.includes("الفطور")) {
                     catImg = "1.jpg";
