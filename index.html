@@ -223,7 +223,7 @@
             white-space: nowrap;
         }
 
-        /* نافذة تخصيص البوكس */
+        /* نافذة تخصيص البوكس بنظام كارت */
         .box-builder-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -1375,7 +1375,7 @@
         </div>
     </div>
 
-    <!-- نافذة تخصيص البوكس بنظام كارت منبثق أنيق -->
+    <!-- نافذة تخصيص البوكس بنظام كارت -->
     <div class="box-builder-modal" id="boxBuilderModal" onclick="if(event.target==this) closeBoxModal()">
         <div class="box-builder-card">
             <div class="box-builder-header">
@@ -1413,7 +1413,7 @@
                 </div>
             </div>
 
-            <!-- 3. قائمة الـ 6 أصناف الخاصة بالبوكس للاختيار منها -->
+            <!-- 3. قائمة الأصناف الخاصة بالبوكس للاختيار منها -->
             <div class="box-builder-label">
                 <span>3. حدد الأصناف المفضلة:</span>
                 <span id="boxDishesCounter" style="color: var(--accent); font-weight: 900; font-size: 0.8rem;"></span>
@@ -1575,19 +1575,19 @@
             <div style="background: rgba(217, 130, 130, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
                 <div class="admin-custom-input-group">
                     <label>📱 رقم استلام الأوردرات (واتساب المتجر):</label>
-                    <input type="tel" id="edit_order_phone" placeholder="97470723952">
+                    <input type="tel" id="edit_order_phone" placeholder="97477332624">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>📞 رقم التواصل والعرض الأول:</label>
-                    <input type="tel" id="edit_display_phone1" placeholder="+97470723952">
+                    <input type="tel" id="edit_display_phone1" placeholder="+974 77332624">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>📞 رقم التواصل والعرض الثاني:</label>
-                    <input type="tel" id="edit_display_phone2" placeholder="+97470723952">
+                    <input type="tel" id="edit_display_phone2" placeholder="+974 77332624">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>⚠️ رقم الشكاوى والملاحظات:</label>
-                    <input type="tel" id="edit_complaint_phone" placeholder="+97470723952">
+                    <input type="tel" id="edit_complaint_phone" placeholder="+974 77332624">
                 </div>
             </div>
 
@@ -1914,11 +1914,11 @@
 
         let storeContacts = { 
             name: 'Food Factory', 
-            address: 'التواصل خاص علي +97470723952', 
-            orderPhone: '97470723952', 
-            displayPhone1: '+97470723952', 
-            displayPhone2: '+97470723952',
-            complaintPhone: '+97470723952'
+            address: 'التواصل خاص علي +974 77332624', 
+            orderPhone: '97477332624', 
+            displayPhone1: '+974 77332624', 
+            displayPhone2: '+974 77332624',
+            complaintPhone: '+974 77332624'
         };
 
         let menuUnsubscribe = null;
@@ -2087,6 +2087,15 @@
             return v === '' ? '' : v;
         }
 
+        // خريطة بسيطة ومباشرة لصور البوكسات بالأرقام
+        const customBoxImagesMap = {
+            "بوكسات الفطور": "1.jpg",
+            "بكج السعاده": "2.jpg",
+            "بكج يا زين جمعتنا": "3.jpg",
+            "بكج جمعة احباب": "4.jpg",
+            "بكج روق العائله": "5.jpg"
+        };
+
         async function fetchMenuFromGoogleSheet() {
             try {
                 const freshUrl = GOOGLE_SHEET_CSV_URL + (GOOGLE_SHEET_CSV_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
@@ -2106,26 +2115,32 @@
                     const category = cols[0] ? cols[0].trim() : "عام";
                     const name = cols[1] ? cols[1].trim() : "";
                     
-                    // قراءة الأعمدة بدقة حسب ترتيب الشيت
+                    // قراءة الأعمدة حسب ترتيب الشيت
                     const priceNormal = cleanVal(cols[2]); // عمود C: السعر العادي
                     const priceS      = cleanVal(cols[3]); // عمود D: صغير S
                     const priceM      = cleanVal(cols[4]); // عمود E: وسط M
                     const priceL      = cleanVal(cols[5]); // عمود F: كبير L
 
-                    // أسعار البوكسات الخاصة (كبير 6، وسط 6، كبير 4، وسط 4)
+                    // أسعار البوكسات
                     const priceL6 = cleanVal(cols[6]);     // عمود G: كبير 6 أصناف
                     const priceM6 = cleanVal(cols[7]);     // عمود H: وسط 6 أصناف
                     const priceL4 = cleanVal(cols[8]);     // عمود I: كبير 4 أصناف
                     const priceM4 = cleanVal(cols[9]);     // عمود J: وسط 4 أصناف
-                    
-                    // الوصف أو مكونات البوكس
-                    const desc = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : "");
+                    const desc    = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : ""); // عمود K: مكونات البوكس
 
-                    let cleanImageName = name.replace(/^\.\/images\//, '').replace(/^images\//, '');
-                    cleanImageName = cleanImageName.replace(/\.(png|jpeg|webp|jpg)$/i, '');
-                    let img = cleanImageName ? `${IMAGES_PATH}${cleanImageName}.jpg` : `${IMAGES_PATH}default.jpg`;
+                    // نظام ربط الصور: البوكسات بالأرقام، وباقي الأصناف باسمها العادي
+                    let img = `${IMAGES_PATH}default.jpg`;
+                    const normalizedName = name.replace(/\s+/g, ' ').trim();
 
-                    const isBox = category.includes("بوكس") || name.includes("بوكس");
+                    if (customBoxImagesMap[normalizedName]) {
+                        img = `${IMAGES_PATH}${customBoxImagesMap[normalizedName]}`;
+                    } else {
+                        let cleanImageName = name.replace(/^\.\/images\//, '').replace(/^images\//, '');
+                        cleanImageName = cleanImageName.replace(/\.(png|jpeg|webp|jpg)$/i, '').trim();
+                        img = cleanImageName ? `${IMAGES_PATH}${cleanImageName}.jpg` : `${IMAGES_PATH}default.jpg`;
+                    }
+
+                    const isBox = category.includes("بوكس") || name.includes("بوكس") || name.includes("بكج");
 
                     if (isBox) {
                         let parsedDishes = [];
@@ -2144,14 +2159,13 @@
                             img: img,
                             price: priceM4 || priceM6 || "120",
                             isBox: true,
-                            price_l6: parseFloat(priceL6) || 250, // كبير 6 أصناف (عمود G)
-                            price_m6: parseFloat(priceM6) || 200, // وسط 6 أصناف (عمود H)
-                            price_l4: parseFloat(priceL4) || 180, // كبير 4 أصناف (عمود I)
-                            price_m4: parseFloat(priceM4) || 120, // وسط 4 أصناف (عمود J)
+                            price_l6: parseFloat(priceL6) || 250,
+                            price_m6: parseFloat(priceM6) || 200,
+                            price_l4: parseFloat(priceL4) || 180,
+                            price_m4: parseFloat(priceM4) || 120,
                             dishes: parsedDishes
                         });
                     } else {
-                        // دعم خيارات الأحجام المتعددة (S / M / L) للأصناف العادية
                         let variants = [];
                         if (priceS !== '' && priceM !== '' && priceL !== '') {
                             variants = [
@@ -2417,12 +2431,19 @@
                 currentActiveCategory = uniqueCats[0];
             }
 
-            document.getElementById('catNav').innerHTML = uniqueCats.map(cat => `
+            document.getElementById('catNav').innerHTML = uniqueCats.map(cat => {
+                // ضبط صورة قسم بوكسات الفطور لتكون 1.jpg تلقائياً، وباقي الأقسام باسمها
+                let catImg = `${cat}.jpg`;
+                if (cat.includes("بوكسات") || cat.includes("الفطور")) {
+                    catImg = "1.jpg";
+                }
+
+                return `
                 <div class="cat-item ${cat === currentActiveCategory ? 'active' : ''}" onclick="filterCat('${cat}', this)">
-                    <div class="cat-img-box"><img src="${IMAGES_PATH}${cat}.jpg" alt="${cat}" onerror="this.src='${IMAGES_PATH}default.jpg'"></div>
+                    <div class="cat-img-box"><img src="${IMAGES_PATH}${catImg}" alt="${cat}" onerror="this.src='${IMAGES_PATH}default.jpg'"></div>
                     <span>${cat}</span>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
             
             filterCat(currentActiveCategory);
         }
@@ -2706,7 +2727,7 @@
                 ? `المنطقة: ${selectedAreaName || 'غير محدد'} - تفاصيل: ${a || 'لا يوجد'}`
                 : 'استلام ذاتي';
 
-            let purePhone = (storeContacts.orderPhone || '97470723952').replace(/[^0-9]/g, '');
+            let purePhone = (storeContacts.orderPhone || '97477332624').replace(/[^0-9]/g, '');
 
             const textMsg = encodeURIComponent(
                 `🌸 *طلب جديد - Food Factory* 🌸\n` +
@@ -3020,7 +3041,7 @@
             chatUnsubscribe = onSnapshot(collection(db, "order_chats", orderId, "messages"), (snapshot) => {
                 const msgs = [];
                 snapshot.forEach((d) => msgs.push({ id: d.id, ...d.data() }));
-                msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                msgs.sort((a, b) => (a.timestamp || 0) - (a.timestamp || 0));
 
                 if (msgs.length === 0) {
                     messagesContainer.innerHTML = '<p style="text-align:center; padding:20px; color:var(--desc-text); font-weight:700;">لا توجد رسائل سابقة. ابدأ المحادثة الآن!</p>';
