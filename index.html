@@ -100,7 +100,7 @@
             color: var(--main-text); 
             line-height: 1.6; 
             overflow-x: hidden; 
-            padding-bottom: 90px; 
+            padding-bottom: 120px; 
         }
 
         #splash-screen {
@@ -169,7 +169,6 @@
         
         .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
-        /* نافذة تمت الإضافة للسلة الأصلية */
         .toast-popup-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -223,7 +222,6 @@
             white-space: nowrap;
         }
 
-        /* نافذة تخصيص البوكس بنظام كارت */
         .box-builder-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -370,59 +368,6 @@
             cursor: not-allowed;
         }
 
-        .flavor-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.68); z-index: 7000; display: none;
-            justify-content: center; align-items: center; padding: 16px;
-        }
-        .flavor-modal-content {
-            background: var(--white); 
-            width: 100%; 
-            max-width: 300px; 
-            border-radius: 20px; 
-            padding: 16px 14px; 
-            text-align: center;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.3);
-            border: 1px solid var(--border-color);
-            animation: smoothFadeIn 0.18s ease-out;
-        }
-        .flavor-modal-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
-            padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
-        }
-        .flavor-modal-header h3 {
-            font-size: 0.95rem; font-weight: 800; color: var(--accent);
-        }
-        .flavor-close-btn {
-            background: var(--bg); border: 1px solid var(--border-color); width: 26px; height: 26px;
-            border-radius: 50%; font-weight: 800; cursor: pointer; color: var(--main-text); font-size: 0.75rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .flavor-options-grid {
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .flavor-opt-btn {
-            background: var(--bg); 
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px; 
-            padding: 10px 14px; 
-            font-size: 0.9rem; 
-            font-weight: 800;
-            color: var(--main-text); 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center;
-            justify-content: center; 
-            gap: 6px;
-            transition: all 0.15s ease;
-        }
-        .flavor-opt-btn:active {
-            border-color: var(--accent); 
-            background: var(--accent); 
-            color: #ffffff;
-            transform: scale(0.96);
-        }
-
         header { 
             background: var(--header-bg); 
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px var(--card-shadow);
@@ -536,26 +481,6 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.08); }
         }
-
-        .install-pwa-btn {
-            height: 32px;
-            background: var(--accent);
-            border-radius: 10px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.72rem;
-            font-weight: 800;
-            border: none;
-            color: #ffffff;
-            padding: 0 8px;
-            gap: 3px;
-            box-shadow: 0 3px 8px rgba(217, 130, 130, 0.35);
-            transition: transform 0.15s ease;
-            width: 100%;
-        }
-        .install-pwa-btn:active { transform: scale(0.92); }
 
         .header-logo-container { 
             width: 145px; 
@@ -1354,6 +1279,106 @@
             background: var(--accent); color: white; border: none; padding: 10px 16px;
             border-radius: 12px; font-weight: 800; cursor: pointer;
         }
+
+        /* ===== شريط التثبيت السفلي الذكي (Smart Install Bottom Bar) ===== */
+        .bottom-pwa-banner {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 24px);
+            max-width: 480px;
+            background: #ffffff;
+            border: 2px solid var(--accent);
+            border-radius: 22px;
+            padding: 10px 14px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 9500;
+            animation: smoothSlideUp 0.35s ease-out;
+        }
+
+        body.dark-mode .bottom-pwa-banner {
+            background: #201a18;
+            border-color: #d98282;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .pwa-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pwa-banner-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1.5px solid var(--border-color);
+            background: #fff;
+        }
+
+        .pwa-banner-text {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+
+        .pwa-banner-title {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--main-text);
+            line-height: 1.2;
+        }
+
+        .pwa-banner-desc {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--desc-text);
+            line-height: 1.2;
+        }
+
+        .pwa-banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pwa-banner-install-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(217, 130, 130, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.15s ease;
+        }
+
+        .pwa-banner-install-btn:active {
+            transform: scale(0.95);
+        }
+
+        .pwa-banner-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--desc-text);
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -1365,7 +1390,21 @@
         </div>
     </div>
 
-    <!-- نافذة تمت الإضافة للسلة الأصلية -->
+    <!-- شريط تثبيت التطبيق السفلي -->
+    <div class="bottom-pwa-banner" id="bottomPwaBanner">
+        <div class="pwa-banner-left">
+            <img src="images/logooo.png" class="pwa-banner-icon" alt="Food Factory" onerror="this.src='images/default.jpg'">
+            <div class="pwa-banner-text">
+                <span class="pwa-banner-title">تطبيق Food Factory</span>
+                <span class="pwa-banner-desc">ثبّت التطبيق لتجربة أسرع وأسهل</span>
+            </div>
+        </div>
+        <div class="pwa-banner-actions">
+            <button class="pwa-banner-install-btn" onclick="triggerPwaInstall()">📲 تثبيت</button>
+            <button class="pwa-banner-close-btn" onclick="dismissPwaBanner()" title="إغلاق">✕</button>
+        </div>
+    </div>
+
     <div class="toast-popup-modal" id="toastPopupModal">
         <div class="toast-popup-card">
             <div class="toast-circle-check">
@@ -1375,7 +1414,6 @@
         </div>
     </div>
 
-    <!-- نافذة تخصيص البوكس بنظام كارت -->
     <div class="box-builder-modal" id="boxBuilderModal" onclick="if(event.target==this) closeBoxModal()">
         <div class="box-builder-card">
             <div class="box-builder-header">
@@ -1383,7 +1421,6 @@
                 <button class="box-builder-close" onclick="closeBoxModal()">✕</button>
             </div>
 
-            <!-- 1. اختيار الحجم (وسط أو كبير فقط) -->
             <div class="box-builder-label">
                 <span>1. اختر الحجم:</span>
             </div>
@@ -1398,7 +1435,6 @@
                 </div>
             </div>
 
-            <!-- 2. اختيار باقة الأصناف والسعر -->
             <div class="box-builder-label">
                 <span>2. عدد الأصناف والسعر:</span>
             </div>
@@ -1413,7 +1449,6 @@
                 </div>
             </div>
 
-            <!-- 3. قائمة الأصناف الخاصة بالبوكس للاختيار منها -->
             <div class="box-builder-label">
                 <span>3. حدد الأصناف المفضلة:</span>
                 <span id="boxDishesCounter" style="color: var(--accent); font-weight: 900; font-size: 0.8rem;"></span>
@@ -1423,16 +1458,6 @@
             <button class="box-builder-submit-btn" id="boxSubmitBtn" onclick="submitCustomBoxToCart()" disabled>
                 يرجى إكمال تحديد الأصناف
             </button>
-        </div>
-    </div>
-
-    <div class="flavor-modal" id="flavorModal" onclick="if(event.target==this) closeFlavorModal()">
-        <div class="flavor-modal-content">
-            <div class="flavor-modal-header">
-                <h3 id="flavorModalTitle">اختر التفاصيل</h3>
-                <button class="flavor-close-btn" onclick="closeFlavorModal()">✕</button>
-            </div>
-            <div class="flavor-options-grid" id="flavorOptionsGrid"></div>
         </div>
     </div>
 
@@ -1459,10 +1484,6 @@
                         <span style="font-size: 1.25rem;">🛒</span>
                     </div>
                 </div>
-                <button class="install-pwa-btn" id="installPwaBtn" onclick="triggerUniversalInstall()">
-                    <span>📲</span>
-                    <span>تثبيت</span>
-                </button>
             </div>
         </div>
         <div class="header-brand-info">
@@ -1517,7 +1538,7 @@
             
             <div id="adminAuthView">
                 <div class="pass-form">
-                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور للدخول للوحة:</p>
+                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور للدخول للوحة (الافتراضية: 1):</p>
                     <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus>
                     <button onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
                 </div>
@@ -1658,7 +1679,6 @@
         </div>
     </footer>
 
-    <!-- مودال السلة -->
     <div class="modal" id="cartModal" onclick="if(event.target==this) toggleCart(false)">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px;">طلباتك</h2>
@@ -1722,19 +1742,19 @@
         </div>
     </div>
 
+    <!-- كود الفايربيز المدمج مع التهيئة الذاتية التلقائية -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyAUwDoxvhwCWb3FUtpA2NwmP7qBm5eYOuE",
-          authDomain: "makkah-restaurant.firebaseapp.com",
-          databaseURL: "https://makkah-restaurant-default-rtdb.firebaseio.com",
-          projectId: "makkah-restaurant",
-          storageBucket: "makkah-restaurant.firebasestorage.app",
-          messagingSenderId: "974492409250",
-          appId: "1:974492409250:web:9bfa2523b8f598489526fb",
-          measurementId: "G-3TMKVN9R5H"
+          apiKey: "AIzaSyDNroMSU-MkK1AKByeWytUm6T44f-c0",
+          authDomain: "food-factory-c39cd.firebaseapp.com",
+          projectId: "food-factory-c39cd",
+          storageBucket: "food-factory-c39cd.firebasestorage.app",
+          messagingSenderId: "381786477890",
+          appId: "1:381786477890:web:6b37e086fc505c2a38618a",
+          measurementId: "G-WYJM6C16J6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -1743,10 +1763,34 @@
         window.db = db;
         window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs };
         
+        async function autoInitDatabase() {
+            try {
+                const passDoc = await getDoc(doc(db, "settings", "password"));
+                if (!passDoc.exists()) {
+                    await setDoc(doc(db, "settings", "password"), { value: "1", version: "1.0" });
+                }
+
+                const contactsDoc = await getDoc(doc(db, "settings", "contacts"));
+                if (!contactsDoc.exists()) {
+                    await setDoc(doc(db, "settings", "contacts"), {
+                        orderPhone: "97477332624",
+                        displayPhone1: "+974 77332624",
+                        displayPhone2: "+974 77332624",
+                        complaintPhone: "+974 77332624",
+                        address: "التواصل خاص علي +974 77332624"
+                    });
+                }
+            } catch (err) {
+                console.log("Firebase auto-init skipped:", err);
+            }
+        }
+        autoInitDatabase();
+
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
     <script>
+        /* ===== تسجيل الـ Service Worker وإدارة التثبيت (PWA) ===== */
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1755,54 +1799,62 @@
             });
         }
 
-        function isRunningInsidePWA() {
+        function isRunningStandalone() {
             return (window.matchMedia('(display-mode: standalone)').matches) ||
                    (window.navigator.standalone === true) ||
                    (document.referrer.includes('android-app://'));
         }
 
         let deferredPrompt = null;
-        const installBtn = document.getElementById('installPwaBtn');
+        const installBanner = document.getElementById('bottomPwaBanner');
 
-        function checkAndHandleInstallBtn() {
-            if (isRunningInsidePWA() || localStorage.getItem('app_installed_locally') === 'true') {
-                if (installBtn) installBtn.style.setProperty('display', 'none', 'important');
-                return true;
+        function checkInstallBannerVisibility() {
+            if (isRunningStandalone() || sessionStorage.getItem('dismiss_install_banner') === 'true') {
+                if (installBanner) installBanner.style.display = 'none';
+                return;
             }
-            return false;
+            if (installBanner) {
+                installBanner.style.display = 'flex';
+            }
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (!checkAndHandleInstallBtn() && installBtn) {
-                installBtn.style.display = 'flex';
-            }
+            checkInstallBannerVisibility();
         });
 
-        function triggerUniversalInstall() {
-            if (checkAndHandleInstallBtn()) return;
-
+        function triggerPwaInstall() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        localStorage.setItem('app_installed_locally', 'true');
-                        if (installBtn) installBtn.style.display = 'none';
+                        if (installBanner) installBanner.style.display = 'none';
                     }
                     deferredPrompt = null;
                 });
+            } else {
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert('لتثبيت تطبيق Food Factory على الآيفون:\nاضغط على زر المشاركة (Share ⎋) بالأسفل ثم اختر "إضافة إلى الشاشة الرئيسية (Add to Home Screen ➕)"');
+                } else {
+                    alert('لتثبيت التطبيق، اضغط على الثلاث نقاط أعلى المتصفح ثم اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".');
+                }
             }
         }
 
+        function dismissPwaBanner() {
+            if (installBanner) installBanner.style.display = 'none';
+            sessionStorage.setItem('dismiss_install_banner', 'true');
+        }
+
         window.addEventListener('appinstalled', () => {
-            localStorage.setItem('app_installed_locally', 'true');
-            if (installBtn) installBtn.style.display = 'none';
+            if (installBanner) installBanner.style.display = 'none';
             deferredPrompt = null;
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            checkAndHandleInstallBtn();
+            checkInstallBannerVisibility();
             updateDeliveryAreaOptions();
         });
 
@@ -1923,13 +1975,10 @@
 
         let menuUnsubscribe = null;
 
-        /* ========================================================
-           إدارة البوكسات: الحجمين (وسط / كبير) وخياري الأصناف (4 أو 6)
-           ======================================================== */
         let activeBoxOrder = {
             item: null,
-            size: 'M', // M (وسط) أو L (كبير)
-            count: 4,  // 4 أو 6
+            size: 'M',
+            count: 4,
             selectedDishes: []
         };
 
@@ -2106,20 +2155,17 @@
                     const category = cols[0] ? cols[0].trim() : "عام";
                     const name = cols[1] ? cols[1].trim() : "";
                     
-                    // قراءة الأعمدة حسب ترتيب الشيت
-                    const priceNormal = cleanVal(cols[2]); // عمود C: السعر العادي
-                    const priceS      = cleanVal(cols[3]); // عمود D: صغير S
-                    const priceM      = cleanVal(cols[4]); // عمود E: وسط M
-                    const priceL      = cleanVal(cols[5]); // عمود F: كبير L
+                    const priceNormal = cleanVal(cols[2]);
+                    const priceS      = cleanVal(cols[3]);
+                    const priceM      = cleanVal(cols[4]);
+                    const priceL      = cleanVal(cols[5]);
 
-                    // أسعار البوكسات
-                    const priceL6 = cleanVal(cols[6]);     // عمود G: كبير 6 أصناف
-                    const priceM6 = cleanVal(cols[7]);     // عمود H: وسط 6 أصناف
-                    const priceL4 = cleanVal(cols[8]);     // عمود I: كبير 4 أصناف
-                    const priceM4 = cleanVal(cols[9]);     // عمود J: وسط 4 أصناف
-                    const desc    = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : ""); // عمود K: مكونات البوكس
+                    const priceL6 = cleanVal(cols[6]);
+                    const priceM6 = cleanVal(cols[7]);
+                    const priceL4 = cleanVal(cols[8]);
+                    const priceM4 = cleanVal(cols[9]);
+                    const desc    = cols[10] ? cols[10].trim() : (cols[7] && isNaN(cols[7]) ? cols[7].trim() : "");
 
-                    // جعل صورة قسم بوكسات الفطور موحدة (1.jpg) لكل أصنافه، وباقي الأصناف حسب اسمها الطبيعي
                     let img = `${IMAGES_PATH}default.jpg`;
                     const isBreakfastBoxCategory = category.includes("بوكسات الفطور") || category.includes("فطور");
 
@@ -2239,7 +2285,7 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             let count = 0;
-            const duration = 1800; // عداد سريع وسلس
+            const duration = 1800;
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
