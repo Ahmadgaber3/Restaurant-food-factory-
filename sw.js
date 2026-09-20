@@ -1,4 +1,4 @@
-const CACHE_NAME = 'food-factory-v1';
+constructor CACHE_NAME = 'food-factory-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

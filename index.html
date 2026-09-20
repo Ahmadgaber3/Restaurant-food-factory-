@@ -112,7 +112,7 @@
             z-index: 9999;
             display: flex; justify-content: center; align-items: flex-end;
             padding: 0 20px 115px 20px;
-            transition: 0.6s ease-out;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
             filter: brightness(105%) contrast(100%);
         }
         
@@ -144,7 +144,7 @@
             height: 100%; 
             background: #d98282; 
             border-radius: 10px;
-            transition: width 0.04s linear;
+            transition: width 0.045s linear;
         }
         
         .creative-counter {
@@ -167,7 +167,7 @@
             font-size: 1.25rem;
         }
         
-        .splash-hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .splash-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
 
         .toast-popup-modal {
             position: fixed;
@@ -381,7 +381,7 @@
             justify-content: center; 
             position: relative; 
             margin-bottom: 4px; 
-            min-height: 88px; 
+            min-height: 105px; 
             padding: 0 15px;
         }
         
@@ -402,7 +402,7 @@
             gap: 6px;
         }
 
-        .theme-toggle, .admin-trigger-btn {
+        .theme-toggle {
             width: 38px;
             height: 38px;
             background: var(--bg);
@@ -417,7 +417,7 @@
             box-shadow: 0 2px 6px var(--card-shadow);
             transition: transform 0.15s ease;
         }
-        .theme-toggle:active, .admin-trigger-btn:active {
+        .theme-toggle:active {
             transform: scale(0.92);
         }
 
@@ -482,27 +482,36 @@
             50% { transform: scale(1.08); }
         }
 
+        /* تعديل مقاسات اللوجو إلى 100 × 100 مع دعم الضغط المزدوج */
         .header-logo-container { 
-            width: 145px; 
-            height: 72px; 
-            border-radius: 18px; 
+            width: 100px; 
+            height: 100px; 
+            border-radius: 20px; 
             background: var(--white); 
-            padding: 4px 8px; 
+            padding: 4px; 
             box-shadow: 0 6px 20px var(--card-shadow); 
             overflow: hidden; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             border: 2px solid var(--accent); 
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: transform 0.15s ease;
+        }
+        .header-logo-container:active {
+            transform: scale(0.96);
         }
         .header-logo { 
             width: 100%; 
             height: 100%; 
-            border-radius: 12px; 
-            object-fit: contain; 
+            border-radius: 14px; 
+            object-fit: cover; 
+            pointer-events: none;
         }
 
-        .header-brand-info { text-align: center; width: 100%; padding: 2px 15px 6px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+        .header-brand-info { text-align: center; width: 100%; padding: 4px 15px 6px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
         .app-inner-title { font-size: 1.25rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px; line-height: 1.2; }
         .app-inner-sub { font-size: 0.95rem; font-weight: 700; color: var(--main-text); margin-bottom: 2px; }
 
@@ -1280,7 +1289,7 @@
             border-radius: 12px; font-weight: 800; cursor: pointer;
         }
 
-        /* ===== شريط التثبيت السفلي الذكي (Smart Install Bottom Bar) ===== */
+        /* شريط التثبيت السفلي الذكي */
         .bottom-pwa-banner {
             position: fixed;
             bottom: 12px;
@@ -1466,11 +1475,11 @@
             <div class="header-right-actions">
                 <div class="header-right-col">
                     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="الوضع الليلي / النهاري">🌙</button>
-                    <button class="admin-trigger-btn" onclick="openAdminPanel()" title="لوحة التحكم">⚙️</button>
                 </div>
             </div>
             
-            <div class="header-logo-container">
+            <!-- اللوجو بمقاس 100x100 ومخصص لفتح لوحة التحكم عند الضغط مرتين -->
+            <div class="header-logo-container" id="brandLogoContainer" title="Food Factory">
                 <img src="images/logooo.png" class="header-logo" alt="لوجو Food Factory" onerror="this.src='images/default.jpg'">
             </div>
             
@@ -1790,7 +1799,6 @@
     </script>
 
     <script>
-        /* ===== تسجيل الـ Service Worker وإدارة التثبيت (PWA) ===== */
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1853,9 +1861,29 @@
             deferredPrompt = null;
         });
 
+        /* ربط فتح لوحة التحكم بالضغط مرتين (Double Click / Double Tap) على لوجو المطعم */
+        let lastLogoTapTime = 0;
         document.addEventListener('DOMContentLoaded', () => {
             checkInstallBannerVisibility();
             updateDeliveryAreaOptions();
+
+            const logoContainer = document.getElementById('brandLogoContainer');
+            if (logoContainer) {
+                logoContainer.addEventListener('dblclick', (e) => {
+                    e.preventDefault();
+                    openAdminPanel();
+                });
+
+                logoContainer.addEventListener('touchend', (e) => {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastLogoTapTime;
+                    if (tapLength < 350 && tapLength > 0) {
+                        e.preventDefault();
+                        openAdminPanel();
+                    }
+                    lastLogoTapTime = currentTime;
+                });
+            }
         });
 
         const IMAGES_PATH = "./images/"; 
@@ -2277,6 +2305,7 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
+        /* عداد الـ Splash Screen: مدته 4.5 ثوانٍ بالضبط (4500 ملي ثانية) */
         let isCounterRunning = false;
         function startCreativeCounter(onComplete) {
             if (isCounterRunning) return;
@@ -2285,7 +2314,7 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             let count = 0;
-            const duration = 1800;
+            const duration = 4500; // 4.5 ثوانٍ
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
@@ -2293,7 +2322,8 @@
                 if (count <= 100) {
                     if (counterEl) counterEl.innerText = count;
                     if (barFill) barFill.style.width = count + '%';
-                } else {
+                }
+                if (count >= 100) {
                     clearInterval(timer);
                     if (onComplete) onComplete();
                 }
@@ -2441,19 +2471,12 @@
             renderFooterBranches();
             renderFooterComplaints();
 
-            let menuLoaded = false;
-            let counterFinished = false;
-
-            function tryDismissSplashScreen() {
-                if (menuLoaded && counterFinished) {
-                    const splash = document.getElementById('splash-screen');
-                    if (splash) splash.classList.add('splash-hidden');
-                }
-            }
-
+            // إخفاء الـ Splash Screen فور وصول العداد لـ 100% مباشرة وبدون أي تأخير
             startCreativeCounter(() => {
-                counterFinished = true;
-                tryDismissSplashScreen();
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.classList.add('splash-hidden');
+                }
             });
 
             const freshItems = await fetchMenuFromGoogleSheet();
@@ -2461,8 +2484,6 @@
                 menuData = freshItems;
                 renderNav();
             }
-            menuLoaded = true;
-            tryDismissSplashScreen();
         }
 
         function renderFooterBranches() {
