@@ -482,7 +482,6 @@
             50% { transform: scale(1.08); }
         }
 
-        /* تعديل مقاسات اللوجو إلى 100 × 100 مع دعم الضغط المزدوج */
         .header-logo-container { 
             width: 100px; 
             height: 100px; 
@@ -588,9 +587,9 @@
             background: var(--bg);
             border: 1.5px solid var(--border-color);
             color: var(--main-text);
-            padding: 3px 10px;
+            padding: 4px 10px;
             border-radius: 12px;
-            font-size: 0.74rem;
+            font-size: 0.75rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -1479,7 +1478,7 @@
             </div>
             
             <!-- اللوجو بمقاس 100x100 ومخصص لفتح لوحة التحكم عند الضغط مرتين -->
-            <div class="header-logo-container" id="brandLogoContainer" title="Food Factory">
+            <div class="header-logo-container" id="brandLogoContainer" title="Food Factory (انقر مرتين للإدارة)">
                 <img src="images/logooo.png" class="header-logo" alt="لوجو Food Factory" onerror="this.src='images/default.jpg'">
             </div>
             
@@ -1861,7 +1860,6 @@
             deferredPrompt = null;
         });
 
-        /* ربط فتح لوحة التحكم بالضغط مرتين (Double Click / Double Tap) على لوجو المطعم */
         let lastLogoTapTime = 0;
         document.addEventListener('DOMContentLoaded', () => {
             checkInstallBannerVisibility();
@@ -2183,6 +2181,7 @@
                     const category = cols[0] ? cols[0].trim() : "عام";
                     const name = cols[1] ? cols[1].trim() : "";
                     
+                    const rawPriceC = cols[2] ? cols[2].trim() : "";
                     const priceNormal = cleanVal(cols[2]);
                     const priceS      = cleanVal(cols[3]);
                     const priceM      = cleanVal(cols[4]);
@@ -2232,27 +2231,67 @@
                         });
                     } else {
                         let variants = [];
-                        if (priceS !== '' && priceM !== '' && priceL !== '') {
+
+                        // 1. فحص أسعار المحاشي بالكيلو ونصف الكيلو
+                        const isMahshiCategory = category.includes("محاشي") || category.includes("محشي") || name.includes("محشي") || name.includes("كيلو");
+                        
+                        // استخراج الأرقام من عمود السعر إذا كان مكتوباً فيه سعرين مثل: 80 / 40 أو 100 - 50
+                        const splitPrices = rawPriceC.split(/[\/\-،,]/).map(p => cleanVal(p)).filter(p => p !== '' && !isNaN(parseFloat(p)));
+
+                        if (isMahshiCategory && splitPrices.length >= 2) {
                             variants = [
-                                { size: 'صغير', price: priceS },
-                                { size: 'وسط', price: priceM },
-                                { size: 'كبير', price: priceL }
+                                { size: 'كيلو', price: splitPrices[0] },
+                                { size: 'نصف كيلو', price: splitPrices[1] }
                             ];
-                        } else if (priceS !== '' && priceL !== '') {
+                        } else if (isMahshiCategory && priceL !== '' && (priceS !== '' || priceM !== '')) {
+                            // إذا كانت مدخلة في الأعمدة كوزنين
                             variants = [
-                                { size: 'صغير', price: priceS },
-                                { size: 'كبير', price: priceL }
+                                { size: 'كيلو', price: priceL },
+                                { size: 'نصف كيلو', price: priceS || priceM }
                             ];
-                        } else if (priceM !== '' && priceL !== '') {
-                            variants = [
-                                { size: 'وسط', price: priceM },
-                                { size: 'كبير', price: priceL }
-                            ];
-                        } else if (priceS !== '' && priceM !== '') {
-                            variants = [
-                                { size: 'صغير', price: priceS },
-                                { size: 'وسط', price: priceM }
-                            ];
+                        } else {
+                            // 2. فحص الأصناف ذات الـ 4 أحجام أو الأحجام العادية
+                            const hasNormal = priceNormal !== '' && !isNaN(parseFloat(priceNormal));
+                            const hasS = priceS !== '' && !isNaN(parseFloat(priceS));
+                            const hasM = priceM !== '' && !isNaN(parseFloat(priceM));
+                            const hasL = priceL !== '' && !isNaN(parseFloat(priceL));
+
+                            if (hasNormal && hasS && hasM && hasL) {
+                                // 4 أحجام كاملة (عادي / صغير / وسط / كبير)
+                                variants = [
+                                    { size: 'عادي', price: priceNormal },
+                                    { size: 'صغير', price: priceS },
+                                    { size: 'وسط', price: priceM },
+                                    { size: 'كبير', price: priceL }
+                                ];
+                            } else if (hasS && hasM && hasL) {
+                                variants = [
+                                    { size: 'صغير', price: priceS },
+                                    { size: 'وسط', price: priceM },
+                                    { size: 'كبير', price: priceL }
+                                ];
+                            } else if (hasNormal && hasM && hasL) {
+                                variants = [
+                                    { size: 'عادي', price: priceNormal },
+                                    { size: 'وسط', price: priceM },
+                                    { size: 'كبير', price: priceL }
+                                ];
+                            } else if (hasS && hasL) {
+                                variants = [
+                                    { size: 'صغير', price: priceS },
+                                    { size: 'كبير', price: priceL }
+                                ];
+                            } else if (hasM && hasL) {
+                                variants = [
+                                    { size: 'وسط', price: priceM },
+                                    { size: 'كبير', price: priceL }
+                                ];
+                            } else if (hasS && hasM) {
+                                variants = [
+                                    { size: 'صغير', price: priceS },
+                                    { size: 'وسط', price: priceM }
+                                ];
+                            }
                         }
 
                         let defaultPrice = "0";
@@ -2305,7 +2344,6 @@
             document.getElementById('themeBtn').innerText = isDark ? '☀️' : '🌙';
         }
 
-        /* عداد الـ Splash Screen: مدته 4.5 ثوانٍ بالضبط (4500 ملي ثانية) */
         let isCounterRunning = false;
         function startCreativeCounter(onComplete) {
             if (isCounterRunning) return;
@@ -2314,7 +2352,7 @@
             const counterEl = document.getElementById('loadPercentage');
             const barFill = document.getElementById('progressBarFill');
             let count = 0;
-            const duration = 4500; // 4.5 ثوانٍ
+            const duration = 4500;
             const intervalTime = duration / 100;
 
             const timer = setInterval(() => {
@@ -2471,7 +2509,6 @@
             renderFooterBranches();
             renderFooterComplaints();
 
-            // إخفاء الـ Splash Screen فور وصول العداد لـ 100% مباشرة وبدون أي تأخير
             startCreativeCounter(() => {
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
