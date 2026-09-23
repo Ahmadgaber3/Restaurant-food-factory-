@@ -634,17 +634,34 @@
         .footer-info-container { margin: 15px 0 10px 0; font-size: 0.85rem; color: var(--desc-text); text-align: center; background: var(--bg); padding: 14px; border-radius: 16px; border: 1px solid var(--border-color); }
         .footer-info-container strong { color: var(--accent); display: block; margin-bottom: 5px; font-size: 0.95rem; }
         
+        /* تنسيق الأرقام المعدولة بدون قلب وزر الواتساب في الفوتر */
+        .ltr-phone {
+            direction: ltr !important;
+            display: inline-block;
+            unicode-bidi: embed;
+            font-family: inherit;
+        }
+
+        .footer-contacts-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
         .complaints-box {
             background: rgba(217, 130, 130, 0.08);
             border: 1.5px dashed var(--accent);
             border-radius: 16px;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 15px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         .complaints-title {
             font-size: 0.88rem;
@@ -655,7 +672,7 @@
             gap: 5px;
         }
         .complaints-number {
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: 900;
             color: var(--main-text);
             text-decoration: none;
@@ -663,10 +680,27 @@
             align-items: center;
             gap: 6px;
             background: var(--white);
-            padding: 4px 14px;
+            padding: 6px 14px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
-            margin-top: 3px;
+        }
+        .whatsapp-footer-btn {
+            background: #25D366;
+            color: #ffffff !important;
+            font-size: 0.92rem;
+            font-weight: 900;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            border: 1px solid #1ebe5d;
+            transition: transform 0.15s ease;
+        }
+        .whatsapp-footer-btn:active {
+            transform: scale(0.95);
         }
 
         .footer-rights { font-size: 0.8rem; color: var(--main-text); font-weight: 600; margin-bottom: 5px; }
@@ -1477,7 +1511,7 @@
                 </div>
             </div>
             
-            <!-- اللوجو بمقاس 100x100 ومخصص لفتح لوحة التحكم عند الضغط مرتين -->
+            <!-- اللوجو بمقاس 100x100 ومخصص لفتح لوحة التحكم عند النقر مرتين -->
             <div class="header-logo-container" id="brandLogoContainer" title="Food Factory (انقر مرتين للإدارة)">
                 <img src="images/logooo.png" class="header-logo" alt="لوجو Food Factory" onerror="this.src='images/default.jpg'">
             </div>
@@ -2232,13 +2266,26 @@
                     } else {
                         let variants = [];
 
-                        // 1. فحص أسعار المحاشي بالكيلو ونصف الكيلو
-                        const isMahshiCategory = category.includes("محاشي") || category.includes("محشي") || name.includes("محشي") || name.includes("كيلو");
+                        // 1. فحص أسعار المحاشي والمحاشي الحامضة بدقة
+                        const isMahshiCategory = category.includes("محاشي") || category.includes("المحاشي") || name.includes("محشي") || name.includes("كيلو");
                         
-                        // استخراج الأرقام من عمود السعر إذا كان مكتوباً فيه سعرين مثل: 80 / 40 أو 100 - 50
+                        // فحص إذا كان السعر يحتوي على قيمتين مفصولتين (مثل 80 / 40)
                         const splitPrices = rawPriceC.split(/[\/\-،,]/).map(p => cleanVal(p)).filter(p => p !== '' && !isNaN(parseFloat(p)));
 
-                        if (isMahshiCategory && splitPrices.length >= 2) {
+                        // إذا كان للصنف 3 أسعار صريحة في الأعمدة (صغير / وسط / كبير)
+                        const has3ColPrices = (priceS !== '' && !isNaN(parseFloat(priceS))) && 
+                                              (priceM !== '' && !isNaN(parseFloat(priceM))) && 
+                                              (priceL !== '' && !isNaN(parseFloat(priceL)));
+
+                        if (isMahshiCategory && has3ColPrices) {
+                            // أصناف المحاشي التي تحتوي على 3 أحجام (صغير / وسط / كبير)
+                            variants = [
+                                { size: 'صغير', price: priceS },
+                                { size: 'وسط', price: priceM },
+                                { size: 'كبير', price: priceL }
+                            ];
+                        } else if (isMahshiCategory && splitPrices.length >= 2) {
+                            // أصناف المحاشي بنظام الأوزان (كيلو ونصف كيلو)
                             variants = [
                                 { size: 'كيلو', price: splitPrices[0] },
                                 { size: 'نصف كيلو', price: splitPrices[1] }
@@ -2250,7 +2297,7 @@
                                 { size: 'نصف كيلو', price: priceS || priceM }
                             ];
                         } else {
-                            // 2. فحص الأصناف ذات الـ 4 أحجام أو الأحجام العادية
+                            // 2. فحص الأصناف الأخرى ذات الـ 4 أحجام أو الأحجام العادية
                             const hasNormal = priceNormal !== '' && !isNaN(parseFloat(priceNormal));
                             const hasS = priceS !== '' && !isNaN(parseFloat(priceS));
                             const hasM = priceM !== '' && !isNaN(parseFloat(priceM));
@@ -2404,16 +2451,25 @@
             const container = document.getElementById('footerComplaintsContainer');
             if (!container) return;
 
+            const safePhone = (storeContacts.complaintPhone || '+974 77332624').trim();
+            const pureWaNum = "97477332624";
+
             container.innerHTML = `
                 <div class="complaints-box">
                     <div class="complaints-title">
                         <span>💬</span>
                         <span>للتواصل المباشر والطلبات الخاصة</span>
                     </div>
-                    <a href="tel:${storeContacts.complaintPhone}" class="complaints-number">
-                        <span>📞</span>
-                        <span>${storeContacts.complaintPhone}</span>
-                    </a>
+                    <div class="footer-contacts-actions">
+                        <a href="tel:${safePhone.replace(/\s+/g, '')}" class="complaints-number">
+                            <span>📞</span>
+                            <span class="ltr-phone">${safePhone}</span>
+                        </a>
+                        <a href="https://wa.me/${pureWaNum}" target="_blank" class="whatsapp-footer-btn">
+                            <span>🟢</span>
+                            <span>واتساب: <span class="ltr-phone">77332624</span></span>
+                        </a>
+                    </div>
                 </div>
             `;
         }
@@ -2524,10 +2580,11 @@
         }
 
         function renderFooterBranches() {
+            const safePhone = (storeContacts.displayPhone1 || '+974 77332624').trim();
             document.getElementById('footerBranchesContainer').innerHTML = `
                 <strong>📍 Food Factory - with love</strong>
                 ${storeContacts.address}<br>
-                📞 ${storeContacts.displayPhone1}
+                📞 <span class="ltr-phone">${safePhone}</span>
             `;
         }
 
@@ -3081,7 +3138,7 @@
                     </div>
 
                     <div class="order-contact-sub">
-                        <span>📞 <a href="tel:${order.phone}">${order.phone || ''}</a></span>
+                        <span>📞 <a href="tel:${order.phone}" class="ltr-phone">${order.phone || ''}</a></span>
                         <span>|</span>
                         <span>🛵 ${order.type || 'طلب'}</span>
                         <span>|</span>
