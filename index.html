@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -168,6 +168,66 @@
         }
         
         .splash-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+
+        /* نافذة اختيار الفرع */
+        .branch-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); z-index: 9998; display: none;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .branch-card {
+            background: var(--white); border-radius: 28px; padding: 26px 22px;
+            width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popToastIn 0.25s ease-out;
+            border: 1.5px solid var(--border-color);
+        }
+        .branch-card-title {
+            font-size: 1.25rem; font-weight: 900; color: var(--accent); margin-bottom: 6px;
+        }
+        .branch-card-sub {
+            font-size: 0.85rem; color: var(--desc-text); font-weight: 700; margin-bottom: 20px;
+        }
+        .branch-select-list {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .branch-select-btn {
+            background: var(--bg); border: 2px solid var(--border-color);
+            border-radius: 18px; padding: 14px; display: flex;
+            align-items: center; justify-content: space-between; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .branch-select-btn:active {
+            border-color: var(--accent); background: rgba(217, 130, 130, 0.1); transform: scale(0.98);
+        }
+        .branch-btn-info {
+            display: flex; flex-direction: column; text-align: right;
+        }
+        .branch-btn-name {
+            font-size: 1.05rem; font-weight: 900; color: var(--main-text);
+        }
+        .branch-btn-desc {
+            font-size: 0.76rem; color: var(--desc-text); font-weight: 700;
+        }
+        .branch-btn-arrow {
+            font-size: 1.2rem; color: var(--accent); font-weight: 900;
+        }
+
+        .current-branch-badge {
+            background: rgba(217, 130, 130, 0.12);
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            margin-top: 2px;
+            transition: transform 0.15s ease;
+        }
+        .current-branch-badge:active { transform: scale(0.95); }
 
         .toast-popup-modal {
             position: fixed;
@@ -634,7 +694,6 @@
         .footer-info-container { margin: 15px 0 10px 0; font-size: 0.85rem; color: var(--desc-text); text-align: center; background: var(--bg); padding: 14px; border-radius: 16px; border: 1px solid var(--border-color); }
         .footer-info-container strong { color: var(--accent); display: block; margin-bottom: 5px; font-size: 0.95rem; }
         
-        /* تنسيق الأرقام المعدولة بدون قلب وزر الواتساب في الفوتر */
         .ltr-phone {
             direction: ltr !important;
             display: inline-block;
@@ -725,176 +784,19 @@
         .user-fields input, .user-fields textarea { background: var(--bg); border: 1.5px solid var(--border-color); padding: 14px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; }
         #uAddr { transition: all 0.2s ease; }
 
-        .chic-area-picker-btn {
-            width: 100%;
-            background: #ffffff;
-            border: 1.5px solid var(--border-color);
-            padding: 14px 16px;
+        /* شريط التوصيل حسب المنطقة الثابت */
+        .simple-delivery-notice {
+            background: rgba(217, 130, 130, 0.1);
+            border: 1.5px dashed var(--accent);
             border-radius: 14px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-            transition: all 0.2s ease;
-            text-align: right;
-        }
-        .chic-area-picker-btn:hover, .chic-area-picker-btn:active {
-            border-color: var(--accent);
-            transform: scale(0.99);
-        }
-        .chic-area-content {
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        .chic-area-icon {
-            font-size: 1.25rem;
-            color: var(--accent);
-            background: rgba(217, 130, 130, 0.12);
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .chic-area-details {
-            display: flex;
-            flex-direction: column;
-            text-align: right;
-        }
-        .chic-area-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: var(--main-text);
-        }
-        .chic-area-sub {
-            font-size: 0.75rem;
-            color: var(--desc-text);
-            font-weight: 600;
-        }
-        .chic-area-arrow {
-            font-size: 0.85rem;
-            color: var(--accent);
-            font-weight: 900;
-        }
-
-        .areas-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.72);
-            z-index: 3500;
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
-        }
-        .areas-sheet {
-            background: #ffffff;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 28px 28px 0 0;
-            padding: 20px 18px 25px 18px;
-            max-height: 82vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
-            animation: smoothSlideUp 0.22s ease-out;
-        }
-        .areas-sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f1f3f5;
-        }
-        .areas-sheet-header h3 {
-            font-size: 1.05rem;
-            font-weight: 900;
             color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .areas-close-btn {
-            background: var(--bg);
-            border: 1px solid var(--border-color);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--main-text);
-        }
-        .areas-search-input {
-            width: 100%;
-            padding: 12px 14px;
-            background: #f8fafc;
-            border: 1.5px solid var(--border-color);
-            border-radius: 14px;
             font-size: 0.88rem;
-            font-weight: 700;
-            color: var(--main-text);
-            margin-bottom: 12px;
-            outline: none;
-        }
-        .areas-search-input:focus {
-            border-color: var(--accent);
-            background: #ffffff;
-        }
-        .areas-list-scroll {
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-left: 2px;
-            max-height: 55vh;
-        }
-        .area-item-card {
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 12px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .area-item-card:hover, .area-item-card:active {
-            border-color: var(--accent);
-            background: rgba(217, 130, 130, 0.05);
-            transform: scale(0.99);
-        }
-        .area-item-card.selected {
-            border-color: var(--accent);
-            background: rgba(217, 130, 130, 0.1);
-        }
-        .area-item-name {
-            font-size: 0.92rem;
             font-weight: 800;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .area-item-fee {
-            background: rgba(217, 130, 130, 0.14);
-            color: var(--accent);
-            font-size: 0.8rem;
-            font-weight: 900;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(217, 130, 130, 0.3);
         }
 
         .submit-btn { background: var(--accent); color: white; border: none; padding: 18px; border-radius: 18px; width: 100%; font-weight: 800; cursor: pointer; }
@@ -1432,6 +1334,31 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار الفرع (تفتح فور انتهاء العداد) -->
+    <div class="branch-modal" id="branchModal">
+        <div class="branch-card">
+            <div style="font-size: 2.2rem; margin-bottom: 6px;">📍</div>
+            <div class="branch-card-title">مرحباً بكم في Food Factory</div>
+            <div class="branch-card-sub">يرجى تحديد الفرع الأقرب إليك لبدء الطلب:</div>
+            <div class="branch-select-list">
+                <div class="branch-select-btn" onclick="selectAppBranch('alwaab')">
+                    <div class="branch-btn-info">
+                        <span class="branch-btn-name">فرع الوعب</span>
+                        <span class="branch-btn-desc">استقبال الطلبات: <span class="ltr-phone">+974 55676552</span></span>
+                    </div>
+                    <span class="branch-btn-arrow">❮</span>
+                </div>
+                <div class="branch-select-btn" onclick="selectAppBranch('ummalad')">
+                    <div class="branch-btn-info">
+                        <span class="branch-btn-name">فرع أم العمد</span>
+                        <span class="branch-btn-desc">استقبال الطلبات: <span class="ltr-phone">+974 70723952</span></span>
+                    </div>
+                    <span class="branch-btn-arrow">❮</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- شريط تثبيت التطبيق السفلي -->
     <div class="bottom-pwa-banner" id="bottomPwaBanner">
         <div class="pwa-banner-left">
@@ -1511,7 +1438,6 @@
                 </div>
             </div>
             
-            <!-- اللوجو بمقاس 100x100 ومخصص لفتح لوحة التحكم عند النقر مرتين -->
             <div class="header-logo-container" id="brandLogoContainer" title="Food Factory (انقر مرتين للإدارة)">
                 <img src="images/logooo.png" class="header-logo" alt="لوجو Food Factory" onerror="this.src='images/default.jpg'">
             </div>
@@ -1531,6 +1457,11 @@
         <div class="header-brand-info">
             <div class="app-inner-title">Food Factory</div>
             <div class="app-inner-sub">with love - تجهيزات متنوعة وبوكسات الجمعات</div>
+            <div class="current-branch-badge" onclick="openBranchModal(true)">
+                <span>📍</span>
+                <span id="currentBranchDisplayTag">جاري تحديد الفرع...</span>
+                <span style="font-size:0.68rem; opacity:0.8;">(تغيير)</span>
+            </div>
         </div>
         <div class="category-nav" id="catNav"></div>
     </header>
@@ -1574,13 +1505,13 @@
     <div class="admin-modal" id="adminModal" onclick="if(event.target==this) closeAdminPanel()">
         <div class="admin-box">
             <div class="admin-header">
-                <h3>⚙️ واجهة الإدارة والتحكم</h3>
+                <h3 id="adminPanelHeaderTitle">⚙️ لوحة تحكم الفرع</h3>
                 <button class="admin-close" onclick="closeAdminPanel()">✕</button>
             </div>
             
             <div id="adminAuthView">
                 <div class="pass-form">
-                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);">أدخل كلمة المرور للدخول للوحة (الافتراضية: 1):</p>
+                    <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);" id="adminAuthSubtitle">أدخل كلمة المرور للدخول للوحة (الافتراضية: 1):</p>
                     <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus>
                     <button onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
                 </div>
@@ -1591,25 +1522,25 @@
                     <div class="admin-nav-card" onclick="openFloatingModal('statusModal')">
                         <div class="card-avatar-box orange-bg">📦</div>
                         <div class="card-title">إدارة الأصناف</div>
-                        <div class="card-subtitle">تشغيل وإيقاف الوجبات والمنتجات</div>
+                        <div class="card-subtitle">تشغيل وإيقاف منتجات الفرع</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('logsModal')">
                         <div class="card-avatar-box blue-bg">📜</div>
                         <div class="card-title">الطلبات الواردة</div>
-                        <div class="card-subtitle">عرض الطلبات ومتابعة الشات</div>
+                        <div class="card-subtitle">عرض طلبات الفرع ومتابعة الشات</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('contactsModal')">
                         <div class="card-avatar-box red-bg">📞</div>
                         <div class="card-title">أرقام التواصل</div>
-                        <div class="card-subtitle">تعديل أرقام الواتساب والاستفسارات</div>
+                        <div class="card-subtitle">تعديل أرقام الواتساب للفرع</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="openFloatingModal('passwordModal')">
                         <div class="card-avatar-box green-bg">👨‍💼</div>
                         <div class="card-title">تغيير كلمة المرور</div>
-                        <div class="card-subtitle">حماية اللوحة وتغيير كلمة السر</div>
+                        <div class="card-subtitle">حماية لوحة تحكم الفرع</div>
                     </div>
 
                     <div class="admin-nav-card" onclick="manualSyncFromSheet()" style="grid-column: span 2;">
@@ -1631,37 +1562,37 @@
     <div class="floating-sub-modal" id="contactsModal" onclick="if(event.target==this) closeFloatingModal('contactsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>📞 التحكم في أرقام التواصل</h4>
+                <h4>📞 التحكم في أرقام الفرع</h4>
                 <button class="admin-close" onclick="closeFloatingModal('contactsModal')">✕</button>
             </div>
             
             <div style="background: rgba(217, 130, 130, 0.08); border: 1.5px solid var(--accent); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
                 <div class="admin-custom-input-group">
-                    <label>📱 رقم استلام الأوردرات (واتساب المتجر):</label>
-                    <input type="tel" id="edit_order_phone" placeholder="97477332624">
+                    <label>📱 رقم استلام الأوردرات (واتساب الفرع):</label>
+                    <input type="tel" id="edit_order_phone">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>📞 رقم التواصل والعرض الأول:</label>
-                    <input type="tel" id="edit_display_phone1" placeholder="+974 77332624">
+                    <input type="tel" id="edit_display_phone1">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>📞 رقم التواصل والعرض الثاني:</label>
-                    <input type="tel" id="edit_display_phone2" placeholder="+974 77332624">
+                    <input type="tel" id="edit_display_phone2">
                 </div>
                 <div class="admin-custom-input-group">
                     <label>⚠️ رقم الشكاوى والملاحظات:</label>
-                    <input type="tel" id="edit_complaint_phone" placeholder="+974 77332624">
+                    <input type="tel" id="edit_complaint_phone">
                 </div>
             </div>
 
-            <button class="admin-save-btn" onclick="saveContactsToFirebase()">💾 حفظ وتحديث الأرقام فوراً</button>
+            <button class="admin-save-btn" onclick="saveContactsToFirebase()">💾 حفظ وتحديث الأرقام للفرع</button>
         </div>
     </div>
 
     <div class="floating-sub-modal" id="statusModal" onclick="if(event.target==this) closeFloatingModal('statusModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>📦 إدارة وحالة الأصناف</h4>
+                <h4>📦 إدارة وحالة أصناف الفرع</h4>
                 <button class="admin-close" onclick="closeFloatingModal('statusModal')">✕</button>
             </div>
 
@@ -1676,22 +1607,22 @@
     <div class="floating-sub-modal" id="logsModal" onclick="if(event.target==this) closeFloatingModal('logsModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>📜 الطلبات الواردة (Live)</h4>
+                <h4>📜 طلبات الفرع الواردة (Live)</h4>
                 <button class="admin-close" onclick="closeFloatingModal('logsModal')">✕</button>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px;">
                 <span id="currentBranchOrdersCount" style="font-size: 0.85rem; font-weight: 800; color: #475569;"></span>
-                <button id="clearOrdersBtn" onclick="clearCurrentBranchOrderLogs()" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);">🗑️ مسح كافة الطلبات</button>
+                <button id="clearOrdersBtn" onclick="clearCurrentBranchOrderLogs()" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 10px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);">🗑️ مسح طلبات الفرع</button>
             </div>
-            <div id="adminOrdersLogsList">لا توجد طلبات مسجلة حتى الآن.</div>
+            <div id="adminOrdersLogsList">لا توجد طلبات مسجلة للفرع حتى الآن.</div>
         </div>
     </div>
 
     <div class="floating-sub-modal" id="passwordModal" onclick="if(event.target==this) closeFloatingModal('passwordModal')">
         <div class="floating-card-box">
             <div class="floating-header">
-                <h4>👨‍💼 تغيير كلمة مرور اللوحة</h4>
+                <h4>👨‍💼 تغيير كلمة مرور لوحة الفرع</h4>
                 <button class="admin-close" onclick="closeFloatingModal('passwordModal')">✕</button>
             </div>
             <div class="admin-custom-input-group">
@@ -1732,7 +1663,7 @@
                 </div>
                 <div id="deliveryFeeRow" style="display: none; justify-content: space-between; font-size: 0.9rem;">
                     <span>رسوم التوصيل:</span>
-                    <span id="deliveryFeeAmount">0 ر.ق</span>
+                    <span id="deliveryFeeAmount">يحدد حسب المنطقة</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 6px;">
                     <b>الإجمالي الكلي</b>
@@ -1753,16 +1684,10 @@
                 <input type="text" id="uName" placeholder="الاسم بالكامل">
                 <input type="tel" id="uPhone" placeholder="رقم الجوال">
                 
-                <div id="branchDeliveryAreaBox" style="display: none;">
-                    <div class="chic-area-picker-btn" onclick="openAreasSheet()">
-                        <div class="chic-area-content">
-                            <div class="chic-area-icon">📍</div>
-                            <div class="chic-area-details">
-                                <span class="chic-area-title" id="selectedAreaDisplayTitle">اضغط لاختيار منطقة التوصيل</span>
-                                <span class="chic-area-sub" id="selectedAreaDisplaySub">حدد منطقتك لحساب التوصيل</span>
-                            </div>
-                        </div>
-                        <span class="chic-area-arrow">تغيير ❯</span>
+                <div id="simpleDeliveryAreaBox">
+                    <div class="simple-delivery-notice">
+                        <span>🛵</span>
+                        <span>سعر التوصيل: يحدد حسب المنطقة مع المطعم</span>
                     </div>
                 </div>
 
@@ -1773,18 +1698,7 @@
         </div>
     </div>
 
-    <div class="areas-modal" id="areasModal" onclick="if(event.target==this) closeAreasSheet()">
-        <div class="areas-sheet">
-            <div class="areas-sheet-header">
-                <h3 id="areasModalTitle">📍 اختر منطقة التوصيل</h3>
-                <button class="areas-close-btn" onclick="closeAreasSheet()">✕</button>
-            </div>
-            <input type="text" class="areas-search-input" id="areaSearchField" placeholder="🔍 ابحث عن منطقتك..." oninput="filterDeliveryAreasList()">
-            <div class="areas-list-scroll" id="areasListContainer"></div>
-        </div>
-    </div>
-
-    <!-- كود الفايربيز المدمج مع التهيئة الذاتية التلقائية -->
+    <!-- كود الفايربيز المدمج مع إدارة الفروع والتهيئة الذاتية -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1805,28 +1719,46 @@
         window.db = db;
         window.firebaseModules = { doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, deleteDoc, getDocs };
         
-        async function autoInitDatabase() {
+        async function autoInitBranchSettings() {
             try {
-                const passDoc = await getDoc(doc(db, "settings", "password"));
-                if (!passDoc.exists()) {
-                    await setDoc(doc(db, "settings", "password"), { value: "1", version: "1.0" });
+                // 1. فرع الوعب
+                const passDoc1 = await getDoc(doc(db, "settings", "password_alwaab"));
+                if (!passDoc1.exists()) {
+                    await setDoc(doc(db, "settings", "password_alwaab"), { value: "1", version: "1.0" });
                 }
-
-                const contactsDoc = await getDoc(doc(db, "settings", "contacts"));
-                if (!contactsDoc.exists()) {
-                    await setDoc(doc(db, "settings", "contacts"), {
-                        orderPhone: "97477332624",
-                        displayPhone1: "+974 77332624",
+                const contDoc1 = await getDoc(doc(db, "settings", "contacts_alwaab"));
+                if (!contDoc1.exists()) {
+                    await setDoc(doc(db, "settings", "contacts_alwaab"), {
+                        branchName: "فرع الوعب",
+                        orderPhone: "97455676552",
+                        displayPhone1: "+974 55676552",
                         displayPhone2: "+974 77332624",
                         complaintPhone: "+974 77332624",
-                        address: "التواصل خاص علي +974 77332624"
+                        address: "الدوحة - فرع الوعب"
+                    });
+                }
+
+                // 2. فرع أم العمد
+                const passDoc2 = await getDoc(doc(db, "settings", "password_ummalad"));
+                if (!passDoc2.exists()) {
+                    await setDoc(doc(db, "settings", "password_ummalad"), { value: "1", version: "1.0" });
+                }
+                const contDoc2 = await getDoc(doc(db, "settings", "contacts_ummalad"));
+                if (!contDoc2.exists()) {
+                    await setDoc(doc(db, "settings", "contacts_ummalad"), {
+                        branchName: "فرع أم العمد",
+                        orderPhone: "97470723952",
+                        displayPhone1: "+974 70723952",
+                        displayPhone2: "+974 77332624",
+                        complaintPhone: "+974 77332624",
+                        address: "قطر - فرع أم العمد"
                     });
                 }
             } catch (err) {
-                console.log("Firebase auto-init skipped:", err);
+                console.log("Firebase branch auto-init:", err);
             }
         }
-        autoInitDatabase();
+        autoInitBranchSettings();
 
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
@@ -1894,10 +1826,72 @@
             deferredPrompt = null;
         });
 
+        /* ========================================================
+           نظام إدارة الفروع (الوعب / أم العمد)
+           ======================================================== */
+        const BRANCH_CONFIGS = {
+            alwaab: {
+                id: 'alwaab',
+                name: 'فرع الوعب',
+                orderPhone: '97455676552',
+                displayPhone: '+974 55676552',
+                address: 'الدوحة - فرع الوعب'
+            },
+            ummalad: {
+                id: 'ummalad',
+                name: 'فرع أم العمد',
+                orderPhone: '97470723952',
+                displayPhone: '+974 70723952',
+                address: 'قطر - فرع أم العمد'
+            }
+        };
+
+        let currentActiveBranch = localStorage.getItem('food_factory_selected_branch') || null;
+
+        function openBranchModal(force) {
+            const modal = document.getElementById('branchModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeBranchModal() {
+            const modal = document.getElementById('branchModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function selectAppBranch(branchKey) {
+            currentActiveBranch = branchKey;
+            localStorage.setItem('food_factory_selected_branch', branchKey);
+            
+            const branchObj = BRANCH_CONFIGS[branchKey];
+            storeContacts.name = `Food Factory (${branchObj.name})`;
+            storeContacts.orderPhone = branchObj.orderPhone;
+            storeContacts.displayPhone1 = branchObj.displayPhone;
+            storeContacts.address = branchObj.address;
+
+            const branchBadge = document.getElementById('currentBranchDisplayTag');
+            if (branchBadge) branchBadge.innerText = branchObj.name;
+
+            const adminTitle = document.getElementById('adminPanelHeaderTitle');
+            if (adminTitle) adminTitle.innerText = `⚙️ إدارة ${branchObj.name}`;
+
+            closeBranchModal();
+            renderFooterBranches();
+            renderFooterComplaints();
+
+            if (window.firebaseModules && window.db) {
+                listenToMenuStatus();
+                listenToContactsSettings();
+                checkClientSavedOrder();
+                if (adminOrdersUnsubscribe) {
+                    adminOrdersUnsubscribe();
+                    adminOrdersUnsubscribe = null;
+                }
+            }
+        }
+
         let lastLogoTapTime = 0;
         document.addEventListener('DOMContentLoaded', () => {
             checkInstallBannerVisibility();
-            updateDeliveryAreaOptions();
 
             const logoContainer = document.getElementById('brandLogoContainer');
             if (logoContainer) {
@@ -1921,96 +1915,6 @@
         const IMAGES_PATH = "./images/"; 
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT29nZRnpUjhJ_Ys_zMGj5P6t5oj-3P0yU0tFjBIu5yX93R-8zlgEEcmgUULS15ObAF9PQgig1CqZjp/pub?output=csv";
 
-        const deliveryAreas = [
-            { name: "الدوحة ومحيطها", fee: 20 },
-            { name: "الريان", fee: 25 },
-            { name: "الوكرة", fee: 30 },
-            { name: "لوسيل", fee: 30 },
-            { name: "الخور", fee: 50 },
-            { name: "منطقة أخرى", fee: 0, isCustom: true }
-        ];
-
-        let selectedDeliveryAreaObj = null;
-
-        function updateDeliveryAreaOptions() {
-            const boxEl = document.getElementById('branchDeliveryAreaBox');
-            selectedDeliveryAreaObj = null;
-            const titleEl = document.getElementById('selectedAreaDisplayTitle');
-            const subEl = document.getElementById('selectedAreaDisplaySub');
-            if (titleEl) titleEl.innerText = "اضغط لاختيار منطقة التوصيل";
-            if (subEl) subEl.innerText = "حدد منطقتك لحساب التوصيل تلقائياً";
-
-            if (boxEl) {
-                boxEl.style.display = (deliveryAreas.length > 0 && selectedOrderType === 'delivery') ? 'block' : 'none';
-            }
-        }
-
-        function openAreasSheet() {
-            const modalTitle = document.getElementById('areasModalTitle');
-            if (modalTitle) modalTitle.innerText = `📍 مناطق التوصيل`;
-
-            const searchField = document.getElementById('areaSearchField');
-            if (searchField) searchField.value = '';
-
-            renderAreasSheetList('');
-            document.getElementById('areasModal').style.display = 'flex';
-        }
-
-        function closeAreasSheet() {
-            document.getElementById('areasModal').style.display = 'none';
-        }
-
-        function renderAreasSheetList(searchQuery) {
-            const container = document.getElementById('areasListContainer');
-            if (!container) return;
-
-            let filtered = deliveryAreas;
-            if (searchQuery) {
-                const q = searchQuery.trim().toLowerCase();
-                filtered = deliveryAreas.filter(a => a.name.toLowerCase().includes(q));
-            }
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:30px 10px; color:var(--desc-text); font-weight:800;">لا توجد منطقة مطابقة لبحثك</p>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(a => {
-                const isSelected = selectedDeliveryAreaObj && selectedDeliveryAreaObj.name === a.name;
-                const safeName = a.name.replace(/'/g, "\\'");
-                const feeText = a.isCustom ? 'يحدد مع المطعم' : `${a.fee} ر.ق`;
-                const customBadgeStyle = a.isCustom ? 'background: rgba(33, 150, 243, 0.12); color: #0284c7; border-color: rgba(2, 132, 199, 0.3);' : '';
-
-                return `
-                <div class="area-item-card ${isSelected ? 'selected' : ''}" onclick="selectDeliveryArea('${safeName}', ${a.fee}, ${a.isCustom ? 'true' : 'false'})">
-                    <span class="area-item-name">
-                        <span>${a.isCustom ? '📍' : '🛵'}</span>
-                        <span>${a.name}</span>
-                    </span>
-                    <span class="area-item-fee" style="${customBadgeStyle}">${feeText}</span>
-                </div>`;
-            }).join('');
-        }
-
-        function filterDeliveryAreasList() {
-            const q = document.getElementById('areaSearchField').value;
-            renderAreasSheetList(q);
-        }
-
-        function selectDeliveryArea(name, fee, isCustom) {
-            selectedDeliveryAreaObj = { name: name, fee: fee, isCustom: !!isCustom };
-            
-            const titleEl = document.getElementById('selectedAreaDisplayTitle');
-            const subEl = document.getElementById('selectedAreaDisplaySub');
-            if (titleEl) titleEl.innerText = `${name}`;
-            if (subEl) {
-                subEl.innerText = isCustom ? "رسوم التوصيل: يحدد السعر مع الإدارة" : `رسوم التوصيل: ${fee} ر.ق`;
-            }
-
-            closeAreasSheet();
-            updateCart();
-        }
-
         let menuData = [], cart = [];
         let currentTotal = 0; 
         let selectedOrderType = 'delivery';
@@ -2026,9 +1930,9 @@
 
         let storeContacts = { 
             name: 'Food Factory', 
-            address: 'التواصل خاص علي +974 77332624', 
-            orderPhone: '97477332624', 
-            displayPhone1: '+974 77332624', 
+            address: 'التواصل خاص', 
+            orderPhone: '97455676552', 
+            displayPhone1: '+974 55676552', 
             displayPhone2: '+974 77332624',
             complaintPhone: '+974 77332624'
         };
@@ -2266,45 +2170,36 @@
                     } else {
                         let variants = [];
 
-                        // 1. فحص أسعار المحاشي والمحاشي الحامضة بدقة
                         const isMahshiCategory = category.includes("محاشي") || category.includes("المحاشي") || name.includes("محشي") || name.includes("كيلو");
-                        
-                        // فحص إذا كان السعر يحتوي على قيمتين مفصولتين (مثل 80 / 40)
                         const splitPrices = rawPriceC.split(/[\/\-،,]/).map(p => cleanVal(p)).filter(p => p !== '' && !isNaN(parseFloat(p)));
 
-                        // إذا كان للصنف 3 أسعار صريحة في الأعمدة (صغير / وسط / كبير)
                         const has3ColPrices = (priceS !== '' && !isNaN(parseFloat(priceS))) && 
                                               (priceM !== '' && !isNaN(parseFloat(priceM))) && 
                                               (priceL !== '' && !isNaN(parseFloat(priceL)));
 
                         if (isMahshiCategory && has3ColPrices) {
-                            // أصناف المحاشي التي تحتوي على 3 أحجام (صغير / وسط / كبير)
                             variants = [
                                 { size: 'صغير', price: priceS },
                                 { size: 'وسط', price: priceM },
                                 { size: 'كبير', price: priceL }
                             ];
                         } else if (isMahshiCategory && splitPrices.length >= 2) {
-                            // أصناف المحاشي بنظام الأوزان (كيلو ونصف كيلو)
                             variants = [
                                 { size: 'كيلو', price: splitPrices[0] },
                                 { size: 'نصف كيلو', price: splitPrices[1] }
                             ];
                         } else if (isMahshiCategory && priceL !== '' && (priceS !== '' || priceM !== '')) {
-                            // إذا كانت مدخلة في الأعمدة كوزنين
                             variants = [
                                 { size: 'كيلو', price: priceL },
                                 { size: 'نصف كيلو', price: priceS || priceM }
                             ];
                         } else {
-                            // 2. فحص الأصناف الأخرى ذات الـ 4 أحجام أو الأحجام العادية
                             const hasNormal = priceNormal !== '' && !isNaN(parseFloat(priceNormal));
                             const hasS = priceS !== '' && !isNaN(parseFloat(priceS));
                             const hasM = priceM !== '' && !isNaN(parseFloat(priceM));
                             const hasL = priceL !== '' && !isNaN(parseFloat(priceL));
 
                             if (hasNormal && hasS && hasM && hasL) {
-                                // 4 أحجام كاملة (عادي / صغير / وسط / كبير)
                                 variants = [
                                     { size: 'عادي', price: priceNormal },
                                     { size: 'صغير', price: priceS },
@@ -2415,13 +2310,20 @@
             }, intervalTime);
         }
 
+        function getBranchScopedDocKey(prefix) {
+            const bKey = currentActiveBranch || 'alwaab';
+            return `${prefix}_${bKey}`;
+        }
+
         function listenToMenuStatus() {
             if (menuUnsubscribe) menuUnsubscribe();
             
             const { doc, onSnapshot } = window.firebaseModules;
             const db = window.db;
 
-            menuUnsubscribe = onSnapshot(doc(db, "settings", "item_status"), (docSnap) => {
+            const docKey = getBranchScopedDocKey("item_status");
+
+            menuUnsubscribe = onSnapshot(doc(db, "settings", docKey), (docSnap) => {
                 if (docSnap.exists()) {
                     itemStatusMap = docSnap.data();
                 } else {
@@ -2437,7 +2339,9 @@
             const { doc, onSnapshot } = window.firebaseModules;
             const db = window.db;
 
-            onSnapshot(doc(db, "settings", "contacts"), (docSnap) => {
+            const docKey = getBranchScopedDocKey("contacts");
+
+            onSnapshot(doc(db, "settings", docKey), (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     storeContacts = { ...storeContacts, ...data };
@@ -2475,13 +2379,14 @@
         }
 
         window.addEventListener('firebase-ready', async () => {
-            listenToMenuStatus();
-            listenToContactsSettings();
-            checkClientSavedOrder();
+            if (currentActiveBranch) {
+                selectAppBranch(currentActiveBranch);
+            }
         });
 
         function checkClientSavedOrder() {
-            const savedOrderId = localStorage.getItem('my_last_order_id');
+            const bKey = currentActiveBranch || 'alwaab';
+            const savedOrderId = localStorage.getItem(`my_last_order_id_${bKey}`);
             const headerChatBtn = document.getElementById('clientHeaderChatBtn');
             if (savedOrderId) {
                 if (headerChatBtn) {
@@ -2545,8 +2450,9 @@
         }
 
         function openClientHeaderChat() {
-            const orderId = localStorage.getItem('my_last_order_id');
-            const orderName = localStorage.getItem('my_last_order_name') || 'عميل';
+            const bKey = currentActiveBranch || 'alwaab';
+            const orderId = localStorage.getItem(`my_last_order_id_${bKey}`);
+            const orderName = localStorage.getItem(`my_last_order_name_${bKey}`) || 'عميل';
             if (orderId) {
                 openInAppChat(orderId, orderName, 'client');
             }
@@ -2554,21 +2460,24 @@
 
         function dismissClientActiveOrder() {
             if (!confirm("هل تم استلام الأوردر وتريد إنهاء المتابعة وإزالة زر الشات من الأعلى؟")) return;
-            localStorage.removeItem('my_last_order_id');
-            localStorage.removeItem('my_last_order_name');
+            const bKey = currentActiveBranch || 'alwaab';
+            localStorage.removeItem(`my_last_order_id_${bKey}`);
+            localStorage.removeItem(`my_last_order_name_${bKey}`);
             checkClientSavedOrder();
             closeChatModal();
             alert("تم إغلاق متابعة الأوردر بنجاح. شكراً لطلبك من Food Factory!");
         }
 
         async function loadMenu() {
-            renderFooterBranches();
-            renderFooterComplaints();
-
             startCreativeCounter(() => {
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
                     splash.classList.add('splash-hidden');
+                }
+                if (!currentActiveBranch) {
+                    openBranchModal();
+                } else {
+                    selectAppBranch(currentActiveBranch);
                 }
             });
 
@@ -2580,9 +2489,9 @@
         }
 
         function renderFooterBranches() {
-            const safePhone = (storeContacts.displayPhone1 || '+974 77332624').trim();
+            const safePhone = (storeContacts.displayPhone1 || '+974 55676552').trim();
             document.getElementById('footerBranchesContainer').innerHTML = `
-                <strong>📍 Food Factory - with love</strong>
+                <strong>📍 ${storeContacts.name || 'Food Factory'}</strong>
                 ${storeContacts.address}<br>
                 📞 <span class="ltr-phone">${safePhone}</span>
             `;
@@ -2781,30 +2690,19 @@
                 return `<div class="cart-item-card"><img src="${item.img}" class="cart-item-img" alt="${item.name}" onerror="this.src='${IMAGES_PATH}default.jpg'"><div class="cart-item-info"><span class="cart-item-name">${item.name}</span><span class="cart-item-price">${priceText}</span></div><span class="remove-btn" onclick="removeFromCart(${idx})">حذف</span></div>`;
             }).join('');
 
-            let deliveryFee = 0;
-            const deliveryBox = document.getElementById('branchDeliveryAreaBox');
+            const deliveryNotice = document.getElementById('simpleDeliveryAreaBox');
             const feeRow = document.getElementById('deliveryFeeRow');
-            const feeAmountEl = document.getElementById('deliveryFeeAmount');
             const subtotalEl = document.getElementById('itemsSubtotalAmount');
 
-            if (deliveryAreas.length > 0 && selectedOrderType === 'delivery') {
-                if (deliveryBox) deliveryBox.style.display = 'block';
-                if (selectedDeliveryAreaObj) {
-                    deliveryFee = parseFloat(selectedDeliveryAreaObj.fee) || 0;
-                    if (feeRow) feeRow.style.display = 'flex';
-                    if (feeAmountEl) {
-                        feeAmountEl.innerText = selectedDeliveryAreaObj.isCustom ? "يحدد مع الإدارة" : `${deliveryFee} ر.ق`;
-                    }
-                } else {
-                    if (feeRow) feeRow.style.display = 'none';
-                }
+            if (selectedOrderType === 'delivery') {
+                if (deliveryNotice) deliveryNotice.style.display = 'block';
+                if (feeRow) feeRow.style.display = 'flex';
             } else {
-                if (deliveryBox) deliveryBox.style.display = 'none';
-                if (feeRow) deliveryFee = 0;
+                if (deliveryNotice) deliveryNotice.style.display = 'none';
                 if (feeRow) feeRow.style.display = 'none';
             }
 
-            currentTotal = itemsSubtotal + deliveryFee;
+            currentTotal = itemsSubtotal;
             if (subtotalEl) subtotalEl.innerText = `${itemsSubtotal} ر.ق`;
             document.getElementById('totalAmount').innerText = `${currentTotal} ر.ق`;
         }
@@ -2818,18 +2716,18 @@
             const deliveryBtn = document.getElementById('deliveryBtn');
             const takeawayBtn = document.getElementById('takeawayBtn');
             const addrInput = document.getElementById('uAddr');
-            const areaBox = document.getElementById('branchDeliveryAreaBox');
+            const deliveryNotice = document.getElementById('simpleDeliveryAreaBox');
 
             if (type === 'delivery') {
                 deliveryBtn.classList.add('active');
                 takeawayBtn.classList.remove('active');
                 addrInput.style.display = 'block';
-                if (areaBox) areaBox.style.display = 'block';
+                if (deliveryNotice) deliveryNotice.style.display = 'block';
             } else {
                 takeawayBtn.classList.add('active');
                 deliveryBtn.classList.remove('active');
                 addrInput.style.display = 'none';
-                if (areaBox) areaBox.style.display = 'none';
+                if (deliveryNotice) deliveryNotice.style.display = 'none';
             }
             updateCart();
         }
@@ -2847,65 +2745,51 @@
                 return alert("يرجى إكمال البيانات واختيار المنتجات");
             }
 
-            let selectedAreaName = '';
-            let deliveryFeeVal = 0;
-
-            if (selectedOrderType === 'delivery') {
-                if (deliveryAreas.length > 0) {
-                    if (!selectedDeliveryAreaObj) {
-                        return alert(`يرجى اختيار منطقة التوصيل`);
-                    }
-                    selectedAreaName = selectedDeliveryAreaObj.name;
-                    deliveryFeeVal = selectedDeliveryAreaObj.fee || 0;
-                } else {
-                    if (!a) {
-                        return alert("يرجى إدخال عنوان التوصيل بالتفصيل");
-                    }
-                }
+            if (selectedOrderType === 'delivery' && !a) {
+                return alert("يرجى إدخال عنوان التوصيل بالتفصيل");
             }
 
             const typeLabel = selectedOrderType === 'delivery' ? 'توصيل' : 'استلام';
+            const branchName = storeContacts.name || 'Food Factory';
             
             let orderDetailsStr = cart.map((i, index) => {
                 let pText = i.price > 0 ? `(${i.price} ر.ق)` : `(${i.displayPrice})`;
                 return `${index + 1}. ${i.name} [${i.category}] - ${pText}`;
             }).join('\n');
 
-            if (selectedDeliveryAreaObj) {
-                if (selectedDeliveryAreaObj.isCustom) {
-                    orderDetailsStr += `\n📦 توصيل لمنطقة (${selectedAreaName}): يحدد مع الإدارة`;
-                } else if (deliveryFeeVal > 0) {
-                    orderDetailsStr += `\n📦 توصيل لمنطقة (${selectedAreaName}): ${deliveryFeeVal} ر.ق`;
-                }
+            if (selectedOrderType === 'delivery') {
+                orderDetailsStr += `\n🛵 رسوم التوصيل: يحدد حسب المنطقة`;
             }
 
             const uniqueOrderId = Math.floor(1000 + Math.random() * 9000);
             lastPlacedOrderId = uniqueOrderId;
             lastPlacedOrderName = n;
 
-            localStorage.setItem('my_last_order_id', uniqueOrderId);
-            localStorage.setItem('my_last_order_name', n);
+            const bKey = currentActiveBranch || 'alwaab';
+            localStorage.setItem(`my_last_order_id_${bKey}`, uniqueOrderId);
+            localStorage.setItem(`my_last_order_name_${bKey}`, n);
             checkClientSavedOrder();
 
             const fullAddressText = selectedOrderType === 'delivery'
-                ? `المنطقة: ${selectedAreaName || 'غير محدد'} - تفاصيل: ${a || 'لا يوجد'}`
-                : 'استلام ذاتي';
+                ? (a || 'غير محدد')
+                : 'استلام ذاتي من الفرع';
 
-            let purePhone = (storeContacts.orderPhone || '97477332624').replace(/[^0-9]/g, '');
+            let purePhone = (storeContacts.orderPhone || '97455676552').replace(/[^0-9]/g, '');
 
             const textMsg = encodeURIComponent(
-                `🌸 *طلب جديد - Food Factory* 🌸\n` +
+                `🌸 *طلب جديد - ${branchName}* 🌸\n` +
                 `------------------------------------\n` +
                 `📋 *رقم الطلب:* #${uniqueOrderId}\n` +
+                `📍 *الفرع:* ${branchName}\n` +
                 `👤 *الاسم:* ${n}\n` +
                 `📞 *الجوال:* ${p}\n` +
                 `🛵 *نوع الطلب:* ${typeLabel}\n` +
-                (selectedOrderType === 'delivery' ? `📍 *العنوان:* ${fullAddressText}\n` : '') +
+                (selectedOrderType === 'delivery' ? `📍 *العنوان:* ${fullAddressText}\n🛵 *سعر التوصيل:* يحدد حسب المنطقة\n` : '') +
                 (notes ? `📝 *ملاحظات:* ${notes}\n` : '') +
                 `------------------------------------\n` +
                 `🛒 *الأصناف المطلوبـة:*\n${orderDetailsStr}\n` +
                 `------------------------------------\n` +
-                `💰 *الإجمالي الكلي:* ${currentTotal} ر.ق`
+                `💰 *إجمالي الأصناف:* ${currentTotal} ر.ق`
             );
 
             const waUrl = `https://wa.me/${purePhone}?text=${textMsg}`;
@@ -2914,8 +2798,9 @@
             try {
                 const { collection, addDoc } = window.firebaseModules;
                 const db = window.db;
-                addDoc(collection(db, "orders_log"), {
+                addDoc(collection(db, `orders_log_${bKey}`), {
                     orderId: uniqueOrderId,
+                    branch: bKey,
                     name: n,
                     phone: p,
                     type: typeLabel,
@@ -2934,7 +2819,7 @@
             cart = [];
             updateCart();
 
-            document.getElementById('successOrderText').innerText = `تم تسجيل طلبك رقم #${uniqueOrderId} بنجاح لدى Food Factory. يمكنك التحدث في شات مباشر مع المتجر لمتابعة التجهيز من الزر أعلى الشاشة!`;
+            document.getElementById('successOrderText').innerText = `تم تسجيل طلبك رقم #${uniqueOrderId} بنجاح لدى ${branchName}. يمكنك التحدث في شات مباشر مع المتجر لمتابعة التجهيز من الزر أعلى الشاشة!`;
             document.getElementById('successModal').style.display = 'flex';
         }
 
@@ -2948,6 +2833,9 @@
         }
 
         function openAdminPanel() {
+            const bKey = currentActiveBranch || 'alwaab';
+            const bName = BRANCH_CONFIGS[bKey].name;
+            document.getElementById('adminAuthSubtitle').innerText = `أدخل كلمة المرور للدخول للوحة (${bName}):`;
             document.getElementById('adminPassInput').value = '';
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
@@ -2982,13 +2870,14 @@
         }
 
         function populateContactsAdminFields() {
-            document.getElementById('edit_order_phone').value = storeContacts.orderPhone;
-            document.getElementById('edit_display_phone1').value = storeContacts.displayPhone1;
-            document.getElementById('edit_display_phone2').value = storeContacts.displayPhone2;
-            document.getElementById('edit_complaint_phone').value = storeContacts.complaintPhone;
+            document.getElementById('edit_order_phone').value = storeContacts.orderPhone || '';
+            document.getElementById('edit_display_phone1').value = storeContacts.displayPhone1 || '';
+            document.getElementById('edit_display_phone2').value = storeContacts.displayPhone2 || '';
+            document.getElementById('edit_complaint_phone').value = storeContacts.complaintPhone || '';
         }
 
         async function saveContactsToFirebase() {
+            const bKey = currentActiveBranch || 'alwaab';
             const updated = {
                 orderPhone: document.getElementById('edit_order_phone').value.trim(),
                 displayPhone1: document.getElementById('edit_display_phone1').value.trim(),
@@ -3000,13 +2889,13 @@
             try {
                 const { doc, setDoc } = window.firebaseModules;
                 const db = window.db;
-                await setDoc(doc(db, "settings", "contacts"), updated, { merge: true });
+                await setDoc(doc(db, "settings", `contacts_${bKey}`), updated, { merge: true });
 
                 storeContacts = { ...storeContacts, ...updated };
                 renderFooterBranches();
                 renderFooterComplaints();
 
-                alert("✅ تم حفظ وتحديث كافة الأرقام بنجاح!");
+                alert("✅ تم حفظ وتحديث أرقام الفرع بنجاح!");
                 closeFloatingModal('contactsModal');
             } catch (err) {
                 console.error("Error saving contacts:", err);
@@ -3018,10 +2907,12 @@
             const inputPass = document.getElementById('adminPassInput').value.trim();
             if (!inputPass) return alert("يرجى إدخال كلمة المرور");
 
+            const bKey = currentActiveBranch || 'alwaab';
+
             try {
                 const { doc, getDoc } = window.firebaseModules;
                 const db = window.db;
-                const passDoc = await getDoc(doc(db, "settings", "password"));
+                const passDoc = await getDoc(doc(db, "settings", `password_${bKey}`));
                 
                 const correctPass = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
@@ -3067,10 +2958,11 @@
 
         async function toggleItemStatus(itemName, status) {
             itemStatusMap[itemName] = status;
+            const bKey = currentActiveBranch || 'alwaab';
             try {
                 const { doc, setDoc } = window.firebaseModules;
                 const db = window.db;
-                await setDoc(doc(db, "settings", "item_status"), itemStatusMap, { merge: true });
+                await setDoc(doc(db, "settings", `item_status_${bKey}`), itemStatusMap, { merge: true });
                 if (currentActiveCategory) filterCat(currentActiveCategory);
             } catch (e) {
                 console.error("خطأ في تحديث حالة الصنف:", e);
@@ -3081,10 +2973,11 @@
             menuData.forEach(item => {
                 itemStatusMap[item.name] = status;
             });
+            const bKey = currentActiveBranch || 'alwaab';
             try {
                 const { doc, setDoc } = window.firebaseModules;
                 const db = window.db;
-                await setDoc(doc(db, "settings", "item_status"), itemStatusMap);
+                await setDoc(doc(db, "settings", `item_status_${bKey}`), itemStatusMap);
                 renderAdminItemsList();
                 if (currentActiveCategory) filterCat(currentActiveCategory);
             } catch (e) {
@@ -3097,8 +2990,9 @@
 
             const { collection, onSnapshot } = window.firebaseModules;
             const db = window.db;
+            const bKey = currentActiveBranch || 'alwaab';
 
-            adminOrdersUnsubscribe = onSnapshot(collection(db, "orders_log"), (snapshot) => {
+            adminOrdersUnsubscribe = onSnapshot(collection(db, `orders_log_${bKey}`), (snapshot) => {
                 orderLogsList = [];
                 snapshot.forEach((docSnap) => {
                     orderLogsList.push({ id: docSnap.id, ...docSnap.data() });
@@ -3114,11 +3008,11 @@
             if (!container) return;
 
             if (countLabel) {
-                countLabel.innerText = `إجمالي الطلبات المسجلة: (${orderLogsList.length})`;
+                countLabel.innerText = `إجمالي طلبات الفرع: (${orderLogsList.length})`;
             }
 
             if (orderLogsList.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--desc-text); font-weight:800;">لا توجد طلبات مسجلة حتى الآن.</p>`;
+                container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--desc-text); font-weight:800;">لا توجد طلبات مسجلة للفرع حتى الآن.</p>`;
                 return;
             }
 
@@ -3172,8 +3066,9 @@
             currentActiveChatOrderId = String(orderId);
             currentChatUserType = userType; 
 
+            const bName = BRANCH_CONFIGS[currentActiveBranch || 'alwaab'].name;
             document.getElementById('chatTitle').innerText = `محادثة أوردر #${orderId}`;
-            document.getElementById('chatSub').innerText = userType === 'admin' ? `العميل: ${clientName}` : `محادثة حية مع Food Factory`;
+            document.getElementById('chatSub').innerText = userType === 'admin' ? `العميل: ${clientName}` : `محادثة حية مع Food Factory (${bName})`;
             document.getElementById('chatInputField').value = '';
 
             const finishBtn = document.getElementById('finishOrderBtn');
@@ -3248,10 +3143,11 @@
 
         async function deleteSingleOrder(orderDocId) {
             if (!confirm("هل أنت متأكد من حذف هذا الطلب من السجل؟")) return;
+            const bKey = currentActiveBranch || 'alwaab';
             try {
                 const { doc, deleteDoc } = window.firebaseModules;
                 const db = window.db;
-                await deleteDoc(doc(db, "orders_log", orderDocId));
+                await deleteDoc(doc(db, `orders_log_${bKey}`, orderDocId));
             } catch (e) {
                 alert("حدث خطأ أثناء حذف الطلب");
             }
@@ -3262,14 +3158,15 @@
                 return alert("لا توجد طلبات لحذفها");
             }
 
-            if (!confirm("هل أنت متأكد من رغبتك في مسح كافة الطلبات؟")) return;
+            if (!confirm("هل أنت متأكد من مسح كافة طلبات هذا الفرع؟")) return;
+            const bKey = currentActiveBranch || 'alwaab';
             try {
                 const { deleteDoc, doc } = window.firebaseModules;
                 const db = window.db;
                 for (let o of orderLogsList) {
-                    await deleteDoc(doc(db, "orders_log", o.id));
+                    await deleteDoc(doc(db, `orders_log_${bKey}`, o.id));
                 }
-                alert("تم مسح الطلبات بنجاح!");
+                alert("تم مسح طلبات الفرع بنجاح!");
             } catch (e) {
                 alert("حدث خطأ أثناء حذف الطلبات");
             }
@@ -3287,22 +3184,24 @@
                 return alert("كلمة المرور الجديدة غير متطابقة");
             }
 
+            const bKey = currentActiveBranch || 'alwaab';
+
             try {
                 const { doc, getDoc, setDoc } = window.firebaseModules;
                 const db = window.db;
-                const passDoc = await getDoc(doc(db, "settings", "password"));
+                const passDoc = await getDoc(doc(db, "settings", `password_${bKey}`));
                 const realCurrent = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
                 if (currentPass !== realCurrent) {
                     return alert("كلمة المرور الحالية غير صحيحة");
                 }
 
-                await setDoc(doc(db, "settings", "password"), {
+                await setDoc(doc(db, "settings", `password_${bKey}`), {
                     value: newPass,
                     version: Date.now().toString()
                 });
 
-                alert("تم تحديث كلمة المرور بنجاح!");
+                alert("تم تحديث كلمة المرور للفرع بنجاح!");
                 document.getElementById('currentAdminPass').value = '';
                 document.getElementById('newAdminPass').value = '';
                 document.getElementById('confirmAdminPass').value = '';
