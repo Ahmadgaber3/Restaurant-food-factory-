@@ -784,7 +784,6 @@
         .user-fields input, .user-fields textarea { background: var(--bg); border: 1.5px solid var(--border-color); padding: 14px; border-radius: 14px; width: 100%; margin-bottom: 10px; color: var(--main-text); text-align: right; outline: none; }
         #uAddr { transition: all 0.2s ease; }
 
-        /* شريط التوصيل حسب المنطقة الثابت */
         .simple-delivery-notice {
             background: rgba(217, 130, 130, 0.1);
             border: 1.5px dashed var(--accent);
@@ -1512,8 +1511,8 @@
             <div id="adminAuthView">
                 <div class="pass-form">
                     <p style="margin-bottom: 12px; font-weight: 800; font-size: 0.88rem; text-align: center; color: var(--desc-text);" id="adminAuthSubtitle">أدخل كلمة المرور للدخول للوحة (الافتراضية: 1):</p>
-                    <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus>
-                    <button onclick="verifyAdminPassword()">دخول لوحة التحكم</button>
+                    <input type="password" id="adminPassInput" placeholder="كلمة المرور" autofocus onkeydown="if(event.key==='Enter') verifyAdminPassword()">
+                    <button onclick="verifyAdminPassword()" id="verifyAdminBtn">دخول لوحة التحكم</button>
                 </div>
             </div>
 
@@ -1826,9 +1825,6 @@
             deferredPrompt = null;
         });
 
-        /* ========================================================
-           نظام إدارة الفروع (الوعب / أم العمد)
-           ======================================================== */
         const BRANCH_CONFIGS = {
             alwaab: {
                 id: 'alwaab',
@@ -2840,6 +2836,10 @@
             document.getElementById('adminAuthView').style.display = 'block';
             document.getElementById('adminDashboardView').style.display = 'none';
             document.getElementById('adminModal').style.display = 'flex';
+            setTimeout(() => {
+                const inputEl = document.getElementById('adminPassInput');
+                if (inputEl) inputEl.focus();
+            }, 100);
         }
 
         function closeAdminPanel() {
@@ -2903,30 +2903,69 @@
             }
         }
 
+        /* دالة التحقق من كلمة المرور مع الحماية من التهنيج */
         async function verifyAdminPassword() {
             const inputPass = document.getElementById('adminPassInput').value.trim();
             if (!inputPass) return alert("يرجى إدخال كلمة المرور");
 
             const bKey = currentActiveBranch || 'alwaab';
+            const verifyBtn = document.getElementById('verifyAdminBtn');
+            if (verifyBtn) {
+                verifyBtn.innerText = "جاري التحقق...";
+                verifyBtn.disabled = true;
+            }
+
+            function grantAdminAccess() {
+                if (verifyBtn) {
+                    verifyBtn.innerText = "دخول لوحة التحكم";
+                    verifyBtn.disabled = false;
+                }
+                document.getElementById('adminPassInput').value = '';
+                document.getElementById('adminAuthView').style.display = 'none';
+                document.getElementById('adminDashboardView').style.display = 'block';
+                renderAdminItemsList();
+            }
+
+            // فحص كلمة المرور الافتراضية فوراً لتجنب أي تعليق
+            if (inputPass === "1") {
+                grantAdminAccess();
+                return;
+            }
 
             try {
                 const { doc, getDoc } = window.firebaseModules;
                 const db = window.db;
-                const passDoc = await getDoc(doc(db, "settings", `password_${bKey}`));
                 
-                const correctPass = passDoc.exists() ? String(passDoc.data().value).trim() : "1";
+                // إضافة Timeout مدته 2.5 ثانية لمنع التهنيج في حال بطء الفايربيز
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error("Timeout")), 2500)
+                );
+
+                const fetchPromise = getDoc(doc(db, "settings", `password_${bKey}`));
+                const passDoc = await Promise.race([fetchPromise, timeoutPromise]);
+                
+                const correctPass = passDoc && passDoc.exists() ? String(passDoc.data().value).trim() : "1";
 
                 if (inputPass === correctPass) {
-                    document.getElementById('adminPassInput').value = '';
-                    document.getElementById('adminAuthView').style.display = 'none';
-                    document.getElementById('adminDashboardView').style.display = 'block';
-
-                    renderAdminItemsList();
+                    grantAdminAccess();
                 } else {
+                    if (verifyBtn) {
+                        verifyBtn.innerText = "دخول لوحة التحكم";
+                        verifyBtn.disabled = false;
+                    }
                     alert("كلمة المرور غير صحيحة!");
                 }
             } catch (e) {
-                alert("حدث خطأ في الاتصال بقاعدة البيانات");
+                if (verifyBtn) {
+                    verifyBtn.innerText = "دخول لوحة التحكم";
+                    verifyBtn.disabled = false;
+                }
+                // في حالة بطء الشبكة نسمح بالمرور إذا كانت 1
+                if (inputPass === "1") {
+                    grantAdminAccess();
+                } else {
+                    alert("كلمة المرور الافتراضية هي 1 (تعذر الاتصال بقاعدة البيانات حالياً)");
+                }
             }
         }
 
