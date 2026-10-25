@@ -1350,7 +1350,7 @@
                 <div class="branch-select-btn" onclick="selectAppBranch('ummalad')">
                     <div class="branch-btn-info">
                         <span class="branch-btn-name">فرع أم العمد</span>
-                        <span class="branch-btn-desc">استقبال الطلبات: <span class="ltr-phone">+974 70723952</span></span>
+                        <span class="branch-btn-desc">استقبال الطلبات: <span class="ltr-phone">+974 77332624</span></span>
                     </div>
                     <span class="branch-btn-arrow">❮</span>
                 </div>
@@ -1746,8 +1746,8 @@
                 if (!contDoc2.exists()) {
                     await setDoc(doc(db, "settings", "contacts_ummalad"), {
                         branchName: "فرع أم العمد",
-                        orderPhone: "97470723952",
-                        displayPhone1: "+974 70723952",
+                        orderPhone: "97477332624",
+                        displayPhone1: "+974 77332624",
                         displayPhone2: "+974 77332624",
                         complaintPhone: "+974 77332624",
                         address: "قطر - فرع أم العمد"
@@ -1836,8 +1836,8 @@
             ummalad: {
                 id: 'ummalad',
                 name: 'فرع أم العمد',
-                orderPhone: '97470723952',
-                displayPhone: '+974 70723952',
+                orderPhone: '97477332624',
+                displayPhone: '+974 77332624',
                 address: 'قطر - فرع أم العمد'
             }
         };
@@ -2485,7 +2485,7 @@
         }
 
         function renderFooterBranches() {
-            const safePhone = (storeContacts.displayPhone1 || '+974 55676552').trim();
+            const safePhone = (storeContacts.displayPhone1 || '+974 77332624').trim();
             document.getElementById('footerBranchesContainer').innerHTML = `
                 <strong>📍 ${storeContacts.name || 'Food Factory'}</strong>
                 ${storeContacts.address}<br>
@@ -3139,7 +3139,7 @@
             chatUnsubscribe = onSnapshot(collection(db, "order_chats", orderId, "messages"), (snapshot) => {
                 const msgs = [];
                 snapshot.forEach((d) => msgs.push({ id: d.id, ...d.data() }));
-                msgs.sort((a, b) => (a.timestamp || 0) - (a.timestamp || 0));
+                msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
                 if (msgs.length === 0) {
                     messagesContainer.innerHTML = '<p style="text-align:center; padding:20px; color:var(--desc-text); font-weight:700;">لا توجد رسائل سابقة. ابدأ المحادثة الآن!</p>';
